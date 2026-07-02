@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Sliders, Lock, Unlock, Copy, RotateCcw, Check, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Plus, Minus } from "lucide-react";
 
 // The precise mathematical coordinates for your custom 12-cell layout
 const MOSAIC_GRID_CELLS = [
@@ -62,29 +63,109 @@ export default function EditorialHeroCollage({
   const [imageAspect, setImageAspect] = useState<number>(1.0);
   const collageRef = React.useRef<HTMLDivElement>(null);
 
-  // Permanently locked and non-interactive
-  const settings = DEFAULT_COLLAGE_SETTINGS;
+  // Dev mode & settings state
+  const [devMode, setDevMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem("collage-dev-mode");
+    return saved === "true";
+  });
 
-  // Sync state signals to anything listening, confirming that Dev Mode is disabled and locked
+  const [settings, setSettings] = useState<Record<number, ImageSettings>>(() => {
+    const saved = localStorage.getItem("collage-settings");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Failed to parse collage settings from localStorage", e);
+      }
+    }
+    return { ...DEFAULT_COLLAGE_SETTINGS };
+  });
+
+  const [selectedCell, setSelectedCell] = useState<number | null>(null);
+  const [copied, setCopied] = useState<boolean>(false);
+
+  // Persist state to localStorage
   useEffect(() => {
-    const handleRequestState = () => {
-      window.dispatchEvent(new CustomEvent("dev-mode-changed", { detail: false }));
-      window.dispatchEvent(new CustomEvent("dev-lock-changed", { detail: true }));
-    };
+    localStorage.setItem("collage-dev-mode", String(devMode));
+  }, [devMode]);
 
-    window.addEventListener("request-dev-state", handleRequestState);
+  useEffect(() => {
+    localStorage.setItem("collage-settings", JSON.stringify(settings));
+  }, [settings]);
 
-    // Initial signals
-    window.dispatchEvent(new CustomEvent("dev-mode-changed", { detail: false }));
-    window.dispatchEvent(new CustomEvent("dev-lock-changed", { detail: true }));
+  // Handle cell adjustment changes
+  const updateSetting = (cellIdx: number, field: keyof ImageSettings, value: number) => {
+    setSettings(prev => ({
+      ...prev,
+      [cellIdx]: {
+        ...(prev[cellIdx] || { scale: 100, offsetX: 0, offsetY: 0 }),
+        [field]: value
+      }
+    }));
+  };
 
-    return () => {
-      window.removeEventListener("request-dev-state", handleRequestState);
-    };
-  }, []);
+  // Reset to default configuration
+  const handleReset = () => {
+    if (window.confirm("Are you sure you want to restore the default image alignment settings?")) {
+      setSettings({ ...DEFAULT_COLLAGE_SETTINGS });
+      setSelectedCell(null);
+    }
+  };
+
+  // Copy config to clipboard for locking permanently in code
+  const handleCopyConfig = () => {
+    const formatted = JSON.stringify(settings, null, 2);
+    navigator.clipboard.writeText(formatted).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  // Get image name for description
+  const getImageNameForCell = (idx: number) => {
+    switch (idx) {
+      case 0: return "NOV00034.JPG.jpeg";
+      case 3: return "NOVA0019.JPG.jpeg";
+      case 6: return "hairbelow.jpeg";
+      case 7: return "ear.jpeg";
+      case 8: return "TD-382.jpg.jpeg";
+      case 10: return "kitt.jpeg";
+      case 11: return "TD-297.jpg.jpeg";
+      case 2: return "Solid Red overlay";
+      default: return `Generic/Background (${currentImageUrl.split("/").pop()})`;
+    }
+  };
 
   return (
     <section className="relative w-full max-w-2xl mx-auto p-4 pb-0 flex flex-col items-center justify-center">
+      {/* Dev Mode Floating Banner & Quick Toggle */}
+      <div className="w-full flex items-center justify-between mb-3 px-1">
+        <div className="flex items-center gap-2">
+          <span className="flex h-2 w-2 relative">
+            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${devMode ? "bg-amber-400" : "bg-emerald-400"} opacity-75`}></span>
+            <span className={`relative inline-flex rounded-full h-2 w-2 ${devMode ? "bg-amber-500" : "bg-emerald-500"}`}></span>
+          </span>
+          <span className="text-xs font-mono tracking-wider text-neutral-500 uppercase">
+            Collage Lock: <strong className={devMode ? "text-amber-600" : "text-emerald-600"}>{devMode ? "UNLOCKED (ADJUSTING)" : "LOCKED"}</strong>
+          </span>
+        </div>
+
+        <button
+          onClick={() => {
+            setDevMode(!devMode);
+            if (devMode) setSelectedCell(null);
+          }}
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono tracking-wide border transition-all duration-300 cursor-pointer ${
+            devMode 
+              ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100" 
+              : "bg-neutral-50 text-neutral-600 border-neutral-200 hover:bg-neutral-100 hover:border-neutral-300"
+          }`}
+        >
+          {devMode ? <Unlock className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+          {devMode ? "Lock Position Settings" : "Adjust Image Alignments"}
+        </button>
+      </div>
+
       <div 
         ref={collageRef}
         className="w-full flex items-center justify-center bg-transparent overflow-hidden select-none relative"
@@ -148,11 +229,20 @@ export default function EditorialHeroCollage({
                             ? "/ear.jpeg"
                             : currentImageUrl;
 
+              const isSelected = selectedCell === idx;
+
               return (
                 <div
                   key={idx}
                   id={`collage-cell-${idx}`}
-                  className="absolute border-[0.15cqw] border-white bg-white overflow-hidden"
+                  onClick={() => devMode && setSelectedCell(idx)}
+                  className={`absolute border-[0.15cqw] bg-white overflow-hidden transition-shadow duration-200 ${
+                    devMode 
+                      ? isSelected 
+                        ? "border-amber-500 ring-2 ring-amber-400 ring-offset-1 z-30 cursor-pointer shadow-lg" 
+                        : "border-neutral-300 hover:border-amber-400 hover:z-20 cursor-pointer hover:shadow-md"
+                      : "border-white"
+                  }`}
                   style={{
                     left: `${cell.left}%`,
                     top: `${scaledTop}%`,
@@ -202,12 +292,156 @@ export default function EditorialHeroCollage({
                       style={{ mixBlendMode: "multiply" }}
                     />
                   )}
+
+                  {/* Dev Mode Overlay Index Label */}
+                  {devMode && (
+                    <div className={`absolute top-1 left-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold leading-none z-10 transition-colors ${
+                      isSelected ? "bg-amber-500 text-white" : "bg-black/60 text-white"
+                    }`}>
+                      #{idx}
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
         </div>
       </div>
+
+      {/* Dev Mode Adjustment Dashboard */}
+      {devMode && (
+        <div className="w-full mt-4 p-4 rounded-xl border border-neutral-200 bg-neutral-50 shadow-xs flex flex-col gap-4 animate-fadeIn">
+          {/* Dashboard Header */}
+          <div className="flex items-center justify-between pb-2 border-b border-neutral-200">
+            <div className="flex items-center gap-2">
+              <Sliders className="w-4 h-4 text-neutral-600" />
+              <h4 className="text-sm font-semibold text-neutral-800">
+                {selectedCell !== null 
+                  ? `Editing Cell #${selectedCell}: ${getImageNameForCell(selectedCell)}`
+                  : "Select a cell in the collage to begin adjusting"}
+              </h4>
+            </div>
+            
+            <div className="flex gap-2">
+              <button
+                onClick={handleReset}
+                title="Restore default alignments"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white hover:bg-neutral-100 border border-neutral-200 text-xs text-neutral-600 cursor-pointer transition-colors"
+              >
+                <RotateCcw className="w-3 h-3" />
+                Defaults
+              </button>
+              <button
+                onClick={handleCopyConfig}
+                title="Copy entire configurations object"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-white hover:bg-neutral-100 border border-neutral-200 text-xs text-neutral-600 cursor-pointer transition-colors"
+              >
+                {copied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                {copied ? "Copied!" : "Copy Code"}
+              </button>
+            </div>
+          </div>
+
+          {selectedCell !== null ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Scale Control */}
+              <div className="flex flex-col gap-1.5">
+                <div className="flex justify-between text-xs font-mono text-neutral-600">
+                  <span>Scale:</span>
+                  <span className="font-bold">{(settings[selectedCell]?.scale ?? 100)}%</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => updateSetting(selectedCell, "scale", Math.max(10, (settings[selectedCell]?.scale ?? 100) - 5))}
+                    className="p-1 rounded border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-600 cursor-pointer"
+                  >
+                    <Minus className="w-3 h-3" />
+                  </button>
+                  <input 
+                    type="range"
+                    min="10"
+                    max="300"
+                    value={settings[selectedCell]?.scale ?? 100}
+                    onChange={(e) => updateSetting(selectedCell, "scale", parseInt(e.target.value, 10))}
+                    className="grow h-1.5 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                  />
+                  <button
+                    onClick={() => updateSetting(selectedCell, "scale", Math.min(300, (settings[selectedCell]?.scale ?? 100) + 5))}
+                    className="p-1 rounded border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-600 cursor-pointer"
+                  >
+                    <Plus className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Offset X Control */}
+              <div className="flex flex-col gap-1.5">
+                <div className="flex justify-between text-xs font-mono text-neutral-600">
+                  <span>Offset X:</span>
+                  <span className="font-bold">{(settings[selectedCell]?.offsetX ?? 0)}px</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => updateSetting(selectedCell, "offsetX", (settings[selectedCell]?.offsetX ?? 0) - 1)}
+                    className="p-1 rounded border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-600 cursor-pointer"
+                  >
+                    <ArrowLeft className="w-3 h-3" />
+                  </button>
+                  <input 
+                    type="range"
+                    min="-200"
+                    max="200"
+                    value={settings[selectedCell]?.offsetX ?? 0}
+                    onChange={(e) => updateSetting(selectedCell, "offsetX", parseInt(e.target.value, 10))}
+                    className="grow h-1.5 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                  />
+                  <button
+                    onClick={() => updateSetting(selectedCell, "offsetX", (settings[selectedCell]?.offsetX ?? 0) + 1)}
+                    className="p-1 rounded border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-600 cursor-pointer"
+                  >
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Offset Y Control */}
+              <div className="flex flex-col gap-1.5">
+                <div className="flex justify-between text-xs font-mono text-neutral-600">
+                  <span>Offset Y:</span>
+                  <span className="font-bold">{(settings[selectedCell]?.offsetY ?? 0)}px</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => updateSetting(selectedCell, "offsetY", (settings[selectedCell]?.offsetY ?? 0) - 1)}
+                    className="p-1 rounded border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-600 cursor-pointer"
+                  >
+                    <ArrowUp className="w-3 h-3" />
+                  </button>
+                  <input 
+                    type="range"
+                    min="-200"
+                    max="200"
+                    value={settings[selectedCell]?.offsetY ?? 0}
+                    onChange={(e) => updateSetting(selectedCell, "offsetY", parseInt(e.target.value, 10))}
+                    className="grow h-1.5 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                  />
+                  <button
+                    onClick={() => updateSetting(selectedCell, "offsetY", (settings[selectedCell]?.offsetY ?? 0) + 1)}
+                    className="p-1 rounded border border-neutral-200 bg-white hover:bg-neutral-100 text-neutral-600 cursor-pointer"
+                  >
+                    <ArrowDown className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-4 text-xs font-medium text-neutral-400 font-sans">
+              💡 Tip: Click on any segment of the collage above to select it, then use the sliders to align it.
+            </div>
+          )}
+        </div>
+      )}
     </section>
   );
 }
+
