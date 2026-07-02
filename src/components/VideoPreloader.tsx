@@ -44,6 +44,7 @@ export default function VideoPreloader({ onComplete }: VideoPreloaderProps) {
             muted
             playsInline
             onEnded={onComplete}
+            onError={onComplete}
             className="absolute inset-0 w-full h-full md:object-cover object-contain pointer-events-none mix-blend-normal"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#121110] via-transparent to-[#121110] z-10 pointer-events-none opacity-90" />

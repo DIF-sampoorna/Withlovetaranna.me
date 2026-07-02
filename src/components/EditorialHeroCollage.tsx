@@ -63,11 +63,32 @@ export default function EditorialHeroCollage({
   const [imageAspect, setImageAspect] = useState<number>(1.0);
   const collageRef = React.useRef<HTMLDivElement>(null);
 
+  // Check if admin is active (only via query param ?admin=true, no longer saved in localStorage to keep it completely hidden by default)
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("admin") === "true";
+    } catch (e) {
+      return false;
+    }
+  });
+
+  // Clear previous collage-admin-active key from localStorage to immediately hide it for existing users
+  useEffect(() => {
+    try {
+      localStorage.removeItem("collage-admin-active");
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
   // Dev mode & settings state
   const [devMode, setDevMode] = useState<boolean>(() => {
     const saved = localStorage.getItem("collage-dev-mode");
     return saved === "true";
   });
+
+  const isDevActive = isAdmin && devMode;
 
   const [settings, setSettings] = useState<Record<number, ImageSettings>>(() => {
     const saved = localStorage.getItem("collage-settings");
@@ -139,32 +160,34 @@ export default function EditorialHeroCollage({
   return (
     <section className="relative w-full max-w-2xl mx-auto p-4 pb-0 flex flex-col items-center justify-center">
       {/* Dev Mode Floating Banner & Quick Toggle */}
-      <div className="w-full flex items-center justify-between mb-3 px-1">
-        <div className="flex items-center gap-2">
-          <span className="flex h-2 w-2 relative">
-            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${devMode ? "bg-amber-400" : "bg-emerald-400"} opacity-75`}></span>
-            <span className={`relative inline-flex rounded-full h-2 w-2 ${devMode ? "bg-amber-500" : "bg-emerald-500"}`}></span>
-          </span>
-          <span className="text-xs font-mono tracking-wider text-neutral-500 uppercase">
-            Collage Lock: <strong className={devMode ? "text-amber-600" : "text-emerald-600"}>{devMode ? "UNLOCKED (ADJUSTING)" : "LOCKED"}</strong>
-          </span>
-        </div>
+      {isAdmin && (
+        <div className="w-full flex items-center justify-between mb-3 px-1">
+          <div className="flex items-center gap-2">
+            <span className="flex h-2 w-2 relative">
+              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${isDevActive ? "bg-amber-400" : "bg-emerald-400"} opacity-75`}></span>
+              <span className={`relative inline-flex rounded-full h-2 w-2 ${isDevActive ? "bg-amber-500" : "bg-emerald-500"}`}></span>
+            </span>
+            <span className="text-xs font-mono tracking-wider text-neutral-500 uppercase">
+              Collage Lock: <strong className={isDevActive ? "text-amber-600" : "text-emerald-600"}>{isDevActive ? "UNLOCKED (ADJUSTING)" : "LOCKED"}</strong>
+            </span>
+          </div>
 
-        <button
-          onClick={() => {
-            setDevMode(!devMode);
-            if (devMode) setSelectedCell(null);
-          }}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono tracking-wide border transition-all duration-300 cursor-pointer ${
-            devMode 
-              ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100" 
-              : "bg-neutral-50 text-neutral-600 border-neutral-200 hover:bg-neutral-100 hover:border-neutral-300"
-          }`}
-        >
-          {devMode ? <Unlock className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
-          {devMode ? "Lock Position Settings" : "Adjust Image Alignments"}
-        </button>
-      </div>
+          <button
+            onClick={() => {
+              setDevMode(!devMode);
+              if (devMode) setSelectedCell(null);
+            }}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-mono tracking-wide border transition-all duration-300 cursor-pointer ${
+              isDevActive 
+                ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100" 
+                : "bg-neutral-50 text-neutral-600 border-neutral-200 hover:bg-neutral-100 hover:border-neutral-300"
+            }`}
+          >
+            {isDevActive ? <Unlock className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+            {isDevActive ? "Lock Position Settings" : "Adjust Image Alignments"}
+          </button>
+        </div>
+      )}
 
       <div 
         ref={collageRef}
@@ -235,9 +258,9 @@ export default function EditorialHeroCollage({
                 <div
                   key={idx}
                   id={`collage-cell-${idx}`}
-                  onClick={() => devMode && setSelectedCell(idx)}
+                  onClick={() => isDevActive && setSelectedCell(idx)}
                   className={`absolute border-[0.15cqw] bg-white overflow-hidden transition-shadow duration-200 ${
-                    devMode 
+                    isDevActive 
                       ? isSelected 
                         ? "border-amber-500 ring-2 ring-amber-400 ring-offset-1 z-30 cursor-pointer shadow-lg" 
                         : "border-neutral-300 hover:border-amber-400 hover:z-20 cursor-pointer hover:shadow-md"
@@ -294,7 +317,7 @@ export default function EditorialHeroCollage({
                   )}
 
                   {/* Dev Mode Overlay Index Label */}
-                  {devMode && (
+                  {isDevActive && (
                     <div className={`absolute top-1 left-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold leading-none z-10 transition-colors ${
                       isSelected ? "bg-amber-500 text-white" : "bg-black/60 text-white"
                     }`}>
@@ -309,7 +332,7 @@ export default function EditorialHeroCollage({
       </div>
 
       {/* Dev Mode Adjustment Dashboard */}
-      {devMode && (
+      {isDevActive && (
         <div className="w-full mt-4 p-4 rounded-xl border border-neutral-200 bg-neutral-50 shadow-xs flex flex-col gap-4 animate-fadeIn">
           {/* Dashboard Header */}
           <div className="flex items-center justify-between pb-2 border-b border-neutral-200">
