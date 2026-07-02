@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Taranna Deepjyoti Garg Portfolio",
+  "description": "A stark, highly interactive, and elegant modern leadership portfolio for Taranna Deepjyoti Garg, featuring vertical horizontal slicing, impact overlays, and an editorial magazine layout.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
