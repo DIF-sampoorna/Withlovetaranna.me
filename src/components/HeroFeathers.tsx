@@ -17,7 +17,7 @@ const FEATHERS: SeedFeather[] = [
     id: "visionary",
     label: "SOCIAL ENTREPRENEUR",
     description: "Founder of Deepjyoti India Foundation (Sampoorna), building healthcare, mental health, and dignity-first programs for young women and the elderly across India.",
-    image: "/social_ent.jpeg",
+    image: "/TD-004.jpg.jpeg",
     icon: Sprout,
     readMoreColor: "text-sky-400 hover:text-sky-300",
     objectPosition: "center 20%"

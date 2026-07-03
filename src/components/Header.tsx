@@ -137,6 +137,40 @@ export default function Header({ currentView = "home", setCurrentView }: HeaderP
 
         {/* Header Controls Container */}
         <div className="flex items-center gap-4">
+          {currentView === "home" && (
+            <>
+              {/* Dev Mode Lock Toggle (Only visible in Dev Mode) */}
+              {devMode && (
+                <button
+                  id="btn-dev-lock-toggle"
+                  onClick={handleToggleLock}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-mono font-bold tracking-wider uppercase border transition-all duration-300 shadow-xs cursor-pointer ${
+                    isLocked 
+                      ? "bg-red-500 text-white border-red-600 hover:bg-red-600" 
+                      : "bg-emerald-500 text-white border-emerald-600 hover:bg-emerald-600"
+                  }`}
+                >
+                  {isLocked ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
+                  {isLocked ? "Locked" : "Unlocked"}
+                </button>
+              )}
+
+              {/* Dev Mode Align Toggle */}
+              <button
+                id="btn-dev-align-toggle"
+                onClick={handleToggleDevMode}
+                className={`flex items-center gap-2.5 px-4 py-2 rounded-full text-xs font-mono font-bold tracking-wider uppercase border transition-all duration-300 shadow-xs cursor-pointer ${
+                  devMode 
+                    ? "bg-amber-500 text-white border-amber-600 hover:bg-amber-600 animate-pulse" 
+                    : "bg-neutral-100 text-neutral-600 border-neutral-200 hover:bg-neutral-200"
+                }`}
+              >
+                <Settings className={`w-3.5 h-3.5 ${devMode ? "animate-spin" : ""}`} />
+                {devMode ? "Dev Mode Active" : "Adjust Image Positions"}
+              </button>
+            </>
+          )}
+
           {/* Universal Hamburg/Burger Trigger - Visible on all sizes */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
