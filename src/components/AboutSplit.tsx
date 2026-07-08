@@ -11,7 +11,7 @@ const dP = [
     id: "visionary",
     label: "SOCIAL ENTREPRENEUR",
     description: "Founder of Deepjyoti India Foundation (Sampoorna), building healthcare, mental health, and dignity-first programs for young women and the elderly across India.",
-    image: "/TD-004.jpg.jpeg",
+    image: "/social_ent.jpeg",
     icon: n2,
     readMoreColor: "text-sky-400 hover:text-sky-300",
     objectPosition: "center 20%",

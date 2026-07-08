@@ -266,7 +266,7 @@ const SAVED_SETTINGS = ${JSON.stringify(b, null, 2)};`;
                         : D === 0
                           ? "/NOV00034.JPG.jpeg"
                           : D === 6
-                            ? "/Speaker.JPG.jpeg"
+                            ? "/Speaker.JPG.jpeg?v=fresh"
                             : D === 7
                               ? "/ear.jpeg"
                               : D === 10

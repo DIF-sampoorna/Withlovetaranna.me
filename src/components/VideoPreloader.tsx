@@ -33,7 +33,7 @@ function BA({ onComplete: e }) {
           "absolute inset-0 z-0 overflow-hidden flex items-center justify-center",
         children: l.jsxs("div", {
           className:
-            "relative w-full h-full scale-90 rounded-2xl overflow-hidden shadow-2xl border border-neutral-800/20",
+            "relative w-full h-full overflow-hidden",
           children: [
             l.jsx(Il.img, {
               src: "/taranna.png",
@@ -58,14 +58,6 @@ function BA({ onComplete: e }) {
               onEnded: e,
               className:
                 "absolute inset-0 w-full h-full md:object-cover object-contain pointer-events-none mix-blend-normal",
-            }),
-            l.jsx("div", {
-              className:
-                "absolute inset-0 bg-gradient-to-t from-[#121110] via-transparent to-[#121110] z-10 pointer-events-none opacity-90",
-            }),
-            l.jsx("div", {
-              className:
-                "absolute inset-0 bg-gradient-to-r from-[#121110]/80 via-transparent to-[#121110]/80 z-10 pointer-events-none opacity-90",
             }),
           ],
         }),
