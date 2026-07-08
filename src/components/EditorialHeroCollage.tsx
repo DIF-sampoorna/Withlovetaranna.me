@@ -21,18 +21,18 @@ const lP = [
 ];
 
 const kl = {
-  0: { scale: 120, offsetX: 10, offsetY: -35 },
+  0: { scale: 10, offsetX: 113, offsetY: 67 },
   1: { scale: 100, offsetX: 0, offsetY: 0 },
   2: { scale: 100, offsetX: 0, offsetY: 0 },
-  3: { scale: 125, offsetX: -20, offsetY: -15 },
+  3: { scale: 10, offsetX: -46, offsetY: 143 },
   4: { scale: 100, offsetX: 0, offsetY: 0 },
   5: { scale: 100, offsetX: 0, offsetY: 0 },
-  6: { scale: 120, offsetX: 0, offsetY: 0 },
-  7: { scale: 100, offsetX: 0, offsetY: 0 },
+  6: { scale: 10, offsetX: -39, offsetY: 94 },
+  7: { scale: 10, offsetX: -10, offsetY: 113 },
   8: { scale: 105, offsetX: 0, offsetY: -10 },
   9: { scale: 100, offsetX: 0, offsetY: 0 },
-  10: { scale: 100, offsetX: 0, offsetY: 0 },
-  11: { scale: 100, offsetX: 0, offsetY: 0 },
+  10: { scale: 10, offsetX: 3, offsetY: 24 },
+  11: { scale: 10, offsetX: -33, offsetY: 0 },
 };
 
 function uP({
@@ -51,7 +51,7 @@ function uP({
     [v, y] = k.useState({}),
     p = k.useRef(null),
     [m, g] = k.useState(
-      () => localStorage.getItem("collage_layout_locked") === "true",
+      () => localStorage.getItem("collage_layout_locked") !== "false",
     );
   k.useEffect(() => {
     const E = () => {
@@ -90,7 +90,11 @@ function uP({
     const E = localStorage.getItem("collage_image_settings");
     if (E)
       try {
-        return JSON.parse(E);
+        const parsed = JSON.parse(E);
+        if (parsed && parsed[0] && (parsed[0].scale === 120 || parsed[0].scale === 100)) {
+          return kl;
+        }
+        return parsed;
       } catch (D) {
         console.error("Failed to parse saved collage settings", D);
       }
