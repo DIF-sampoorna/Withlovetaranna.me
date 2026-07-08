@@ -1,246 +1,306 @@
-import { useState, FormEvent } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { MagazineArticle } from "../types";
-import { ArrowRight, BookOpen, Clock, Mail, CheckCircle2 } from "lucide-react";
+import * as React from 'react';
+import { jsx, jsxs } from 'react/jsx-runtime';
+const l = { jsx, jsxs };
+import { motion as X } from 'motion/react';
+import { Sparkles as Wo, Heart as ba, Feather as $x, BookOpen as Rx } from 'lucide-react';
+import * as k from 'react';
 
-const ARTICLES: MagazineArticle[] = [
-  {
-    id: "empathy",
-    num: "01",
-    title: "THE ANATOMY OF EMPATHY IN LEADERSHIP",
-    image: "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&q=80&w=800",
-    readTime: "6 MIN READ",
-    excerpt: "Why scaling structural development fails without designing for the subtle, emotional currents of local community networks."
-  },
-  {
-    id: "geographic",
-    num: "02",
-    title: "SHIFTING THE GEOGRAPHIC SPOTLIGHT",
-    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800",
-    readTime: "4 MIN READ",
-    excerpt: "A tactical roadmap on decentralizing diagnostics hubs beyond the comfortable margins of state capitals."
-  },
-  {
-    id: "logistics",
-    num: "03",
-    title: "THE LOGISTICS OF GRASSROOTS HEALING",
-    image: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&q=80&w=800",
-    readTime: "5 MIN READ",
-    excerpt: "Chronicles of deploying vaccine-refrigerator units across the river terrain channels in Northeast India."
-  }
-];
-
-export default function NewsletterBlog() {
-  const [email, setEmail] = useState("");
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-
-  const handleSubscribe = (e: FormEvent) => {
-    e.preventDefault();
-    if (email.trim() && email.includes("@")) {
-      setIsSubscribed(true);
-      setTimeout(() => {
-        setEmail("");
-      }, 3000);
-    }
-  };
-
-  return (
-    <div id="blog" className="py-24 md:py-36 bg-white border-b border-neutral-100 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6">
-        
-        {/* Section Title */}
-        <div className="mb-20">
-          <span className="font-mono text-xs md:text-sm tracking-[0.2em] uppercase text-neutral-400 font-bold block mb-3">
-            04 // PERSPECTIVES
-          </span>
-          <h2 className="font-display text-4xl md:text-5xl text-neutral-900 leading-tight">
-            The Editorial <span className="font-light italic">Desk.</span>
-          </h2>
-        </div>
-
-        {/* Asymmetrical Magazine Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-end mb-28">
-          {ARTICLES.map((art, idx) => {
-            const isHovered = hoveredIdx === idx;
-            
-            // Asymmetrical height class list for tall vertical bands side-by-side
-            let heightClass = "h-[450px] md:h-[550px]";
-            let colSpan = "md:col-span-4";
-            
-            if (idx === 0) {
-              heightClass = "h-[500px] md:h-[680px]"; // Tallest vertical band
-              colSpan = "md:col-span-5";
-            } else if (idx === 1) {
-              heightClass = "h-[400px] md:h-[510px]";
-              colSpan = "md:col-span-4";
-            } else {
-              heightClass = "h-[350px] md:h-[430px]";
-              colSpan = "md:col-span-3";
-            }
-
-            return (
-              <div
-                key={art.id}
-                className={`${colSpan} flex flex-col justify-between`}
-                onMouseEnter={() => setHoveredIdx(idx)}
-                onMouseLeave={() => setHoveredIdx(null)}
-              >
-                {/* Image Wrap */}
-                <div className={`w-full ${heightClass} relative overflow-hidden group border border-neutral-100 rounded-lg shadow-sm hover:shadow-lg transition-all duration-500 bg-neutral-100`}>
-                  {/* Photo with slow continuous zoom effect on Feature 1 */}
-                  <div className="absolute inset-0">
-                    <img
-                      src={art.image}
-                      alt={art.title}
-                      referrerPolicy="no-referrer"
-                      className={`w-full h-full object-cover filter grayscale contrast-115 mix-blend-multiply brightness-75 transition-transform duration-[10s] ease-out ${
-                        isHovered || (idx === 0) ? "scale-105" : ""
-                      }`}
-                    />
-                    <div className="absolute inset-0 bg-neutral-950/20 group-hover:bg-neutral-950/10 transition-colors" />
-                    <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-neutral-900 to-transparent opacity-80" />
-                  </div>
-
-                  {/* Absolute positioning of top labels */}
-                  <div className="absolute top-5 left-5 right-5 flex justify-between items-start z-10 font-mono text-[11px] text-neutral-300 font-bold">
-                    <span>{art.num} // SECTION</span>
-                    <span className="bg-white/20 backdrop-blur-md px-2 py-0.5 rounded text-[10px]">
-                      ESSAY
-                    </span>
-                  </div>
-
-                  {/* Overlapping, massive bold typography at the bottom */}
-                  <div className="absolute bottom-5 left-5 right-5 z-20 flex flex-col gap-2">
-                    <h3 className={`font-heading font-medium text-lg leading-tight tracking-wider text-white transition-colors duration-300 ${
-                      isHovered ? "text-neutral-200" : ""
-                    }`}>
-                      {art.title}
-                    </h3>
-                    
-                    {/* Excerpt panel */}
-                    <p className={`font-sans text-[11px] text-neutral-300 leading-relaxed transition-all duration-500 overflow-hidden ${
-                      isHovered ? "max-h-24 opacity-100" : "max-h-0 opacity-0"
-                    }`}>
-                      {art.excerpt}
-                    </p>
-
-                    {/* Minimum read-time indicator fading in on hover */}
-                    <AnimatePresence>
-                      {isHovered && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 5 }}
-                          className="font-mono text-xs font-bold text-neutral-200 flex items-center gap-1.5 mt-2"
-                        >
-                          <Clock className="w-3.5 h-3.5" />
-                          <span>[ {art.readTime} &rarr; ]</span>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </div>
-
-                {/* Inline reading trigger text */}
-                <div className="mt-4 flex items-center justify-between border-b border-neutral-100 pb-3">
-                  <span className="font-mono text-xs font-bold text-neutral-400">
-                    PUBLISHED IN SANS REVIEW
-                  </span>
-                  <p className="font-mono text-xs font-bold text-neutral-900 flex items-center gap-1 cursor-pointer hover:font-bold hover:translate-x-1 transition-transform">
-                    READ STORY
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Subscription Anchor (Bottom Half) - Deep Charcoal Minimalist block */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          className="relative rounded-2xl overflow-hidden bg-neutral-950 text-white p-8 md:p-16 border border-neutral-800"
-        >
-          {/* Faint design crosshairs and patterns */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-neutral-900 rounded-full blur-[80px] opacity-60" />
-          <div className="absolute bottom-4 right-6 font-mono text-[8px] text-neutral-800 pointer-events-none select-none tracking-widest hidden md:block">
-            SECURITY KEY: OK // PERSISTENCE LOG: LIVE
-          </div>
-
-          <div className="max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">
-            <div className="flex flex-col gap-3 text-center md:text-left">
-              <span className="font-mono text-[10px] tracking-widest text-neutral-500 font-bold uppercase flex items-center justify-center md:justify-start gap-2">
-                <BookOpen className="w-3.5 h-3.5" />
-                MONTHLY DIGEST
-              </span>
-              <h3 className="font-heading font-semibold text-3xl md:text-4xl tracking-wide text-white">
-                THOUGHTS IN TRANSIT.
-              </h3>
-              <p className="font-sans text-xs md:text-sm text-neutral-400 leading-relaxed max-w-md">
-                A monthly digest on social impact, emotional intelligence, and systemic change. No noise. Just perspective.
-              </p>
-            </div>
-
-            {/* Form */}
-            <div className="w-full max-w-sm">
-              <AnimatePresence mode="wait">
-                {!isSubscribed ? (
-                  <motion.form
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    onSubmit={handleSubscribe}
-                    className="flex flex-col gap-2"
-                  >
-                    <div className="relative border-b border-neutral-700 focus-within:border-white py-3 flex items-center justify-between transition-colors">
-                      <Mail className="w-4 h-4 text-neutral-500 mr-2 shrink-0" />
-                      <input
-                        type="email"
-                        required
-                        placeholder="[ Enter your email address ]"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="bg-transparent font-sans text-sm text-white placeholder-neutral-500 focus:outline-none w-full"
-                      />
-                      <button
-                        type="submit"
-                        className="text-neutral-400 hover:text-white transition-colors duration-300 bg-neutral-900 border border-neutral-800 hover:bg-neutral-800 p-2 rounded-lg cursor-pointer shrink-0"
-                        title="Subscribe"
-                      >
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                    <span className="font-mono text-[9px] text-neutral-500">
-                      Decentralized delivery. Unsubscribe at any physical camp.
-                    </span>
-                  </motion.form>
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="bg-neutral-900/60 border border-emerald-500/20 backdrop-blur-md rounded-xl p-5 flex items-start gap-4"
-                  >
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-heading font-bold text-sm text-white leading-none mb-1">
-                        Subscribed Successfully.
-                      </p>
-                      <p className="font-sans text-xs text-neutral-400 leading-relaxed">
-                        Welcome to Thoughts in Transit. A confirmation has been deployed to the database registers.
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-        </motion.div>
-
-      </div>
-    </div>
-  );
+function GA() {
+  return l.jsxs("section", {
+    className:
+      "relative py-24 px-6 md:px-12 bg-[#FCFAF6] border-t border-neutral-200 overflow-hidden",
+    children: [
+      l.jsx("div", {
+        className:
+          "absolute top-1/4 left-10 w-72 h-72 bg-[#0e5fa3]/5 rounded-full filter blur-3xl pointer-events-none",
+      }),
+      l.jsx("div", {
+        className:
+          "absolute bottom-1/4 right-10 w-96 h-96 bg-[#E65F1B]/5 rounded-full filter blur-3xl pointer-events-none",
+      }),
+      l.jsxs("div", {
+        className: "max-w-7xl mx-auto",
+        children: [
+          l.jsxs("div", {
+            className:
+              "mb-16 md:mb-20 flex flex-col items-center md:items-start text-center md:text-left",
+            children: [
+              l.jsxs("span", {
+                className:
+                  "font-mono text-[10px] tracking-[0.4em] text-[#0e5fa3] font-black uppercase mb-3 flex items-center gap-2",
+                children: [
+                  l.jsx(Wo, { className: "w-3 h-3 text-[#E65F1B]" }),
+                  " THE SHARED INSTINCT",
+                ],
+              }),
+              l.jsx("h2", {
+                className:
+                  "font-heading text-3xl md:text-5xl font-extrabold text-neutral-900 tracking-tight uppercase leading-none",
+                children: "ABOUT TARANNA",
+              }),
+              l.jsx("div", {
+                className: "h-[2px] w-12 bg-neutral-900 mt-4 md:mt-5",
+              }),
+            ],
+          }),
+          l.jsxs("div", {
+            className:
+              "grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start",
+            children: [
+              l.jsxs("div", {
+                className: "lg:col-span-5 flex flex-col gap-6 w-full",
+                children: [
+                  l.jsxs(X.div, {
+                    initial: { opacity: 0, y: 30 },
+                    whileInView: { opacity: 1, y: 0 },
+                    viewport: { once: !0 },
+                    transition: { duration: 1, ease: "easeOut" },
+                    className:
+                      "relative group p-4 bg-white border border-neutral-200 shadow-xl rounded-3xl overflow-hidden",
+                    children: [
+                      l.jsxs("div", {
+                        className:
+                          "aspect-[3/4] rounded-2xl overflow-hidden bg-neutral-100 relative",
+                        children: [
+                          l.jsx("img", {
+                            src: "/NOV00034.JPG.jpeg",
+                            alt: "Taranna Deepjyoti",
+                            className:
+                              "w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]",
+                          }),
+                          l.jsx("div", {
+                            className:
+                              "absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent pointer-events-none",
+                          }),
+                          l.jsx("div", {
+                            className:
+                              "absolute bottom-4 left-4 font-mono text-[8px] tracking-[0.3em] font-bold text-white uppercase bg-black/60 backdrop-blur-md py-1.5 px-3 rounded-md",
+                            children: "PORTRAIT // STUDIO AMBER",
+                          }),
+                        ],
+                      }),
+                      l.jsxs("div", {
+                        className: "pt-4 pb-2 text-center",
+                        children: [
+                          l.jsx("p", {
+                            className:
+                              "font-display italic text-base text-neutral-800",
+                            children:
+                              "“Daring to exist completely, in public and in shadow.”",
+                          }),
+                          l.jsx("p", {
+                            className:
+                              "font-mono text-[8px] tracking-widest text-neutral-400 uppercase mt-1 font-bold",
+                            children: "Kolkata, Summer 2026",
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  l.jsxs("div", {
+                    className: "hidden sm:grid grid-cols-2 gap-4 mt-2",
+                    children: [
+                      l.jsxs("div", {
+                        className:
+                          "p-3 bg-white border border-neutral-150 rounded-2xl shadow-sm rotate-[-1.5deg]",
+                        children: [
+                          l.jsx("div", {
+                            className:
+                              "aspect-square rounded-lg overflow-hidden bg-neutral-100",
+                            children: l.jsx("img", {
+                              src: "/TD-382.jpg.jpeg",
+                              alt: "Poise",
+                              className: "w-full h-full object-cover",
+                            }),
+                          }),
+                          l.jsx("div", {
+                            className:
+                              "pt-2 text-center font-mono text-[7px] text-neutral-400 uppercase tracking-widest font-bold",
+                            children: "Symmetrical Poise",
+                          }),
+                        ],
+                      }),
+                      l.jsxs("div", {
+                        className:
+                          "p-3 bg-white border border-neutral-150 rounded-2xl shadow-sm rotate-[2deg]",
+                        children: [
+                          l.jsx("div", {
+                            className:
+                              "aspect-square rounded-lg overflow-hidden bg-neutral-100",
+                            children: l.jsx("img", {
+                              src: "/Writer.jpg.jpeg",
+                              alt: "Writer",
+                              className: "w-full h-full object-cover",
+                            }),
+                          }),
+                          l.jsx("div", {
+                            className:
+                              "pt-2 text-center font-mono text-[7px] text-neutral-400 uppercase tracking-widest font-bold",
+                            children: "The Writer's Gaze",
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+              l.jsxs("div", {
+                className: "lg:col-span-7 flex flex-col gap-8 w-full",
+                children: [
+                  l.jsxs(X.div, {
+                    initial: { opacity: 0, x: 20 },
+                    whileInView: { opacity: 1, x: 0 },
+                    viewport: { once: !0 },
+                    transition: { duration: 0.8, delay: 0.1 },
+                    className: "flex flex-col gap-6",
+                    children: [
+                      l.jsx("p", {
+                        className:
+                          "font-display italic text-xl md:text-2xl text-neutral-800 leading-relaxed font-light",
+                        children:
+                          "Taranna Deepjyoti moves between four different rooms — and shows up unguarded in every one of them.",
+                      }),
+                      l.jsxs("div", {
+                        className:
+                          "font-sans text-neutral-600 space-y-6 text-sm md:text-base leading-relaxed font-light",
+                        children: [
+                          l.jsxs("p", {
+                            children: [
+                              "She's the founder of ",
+                              l.jsx("strong", {
+                                className: "font-semibold text-neutral-900",
+                                children:
+                                  "Deepjyoti India Foundation (Sampoorna)",
+                              }),
+                              ", building health, mental wellness, and dignity-first programs for young women and the elderly across India. She's a confessional poet, writing free verse that turns longing, loss, and the ache of distance into something physical enough to hold.",
+                            ],
+                          }),
+                          l.jsxs("p", {
+                            children: [
+                              "She's a speaker and podcaster who talks about what most people are taught to swallow — ",
+                              l.jsx("strong", {
+                                className: "font-semibold text-neutral-900",
+                                children: "shame, guilt, rejection",
+                              }),
+                              " — and asks people to feel their way through instead of around it. And she's a plus-size model whose work has helped a generation of men and women see their own bodies as already enough.",
+                            ],
+                          }),
+                          l.jsx("p", {
+                            className:
+                              "border-l-2 border-[#E65F1B]/30 pl-5 italic font-display text-neutral-700 text-base md:text-lg",
+                            children:
+                              "Different mediums, same instinct: dig into a feeling before it's fully named, and turn it into something someone else can use.",
+                          }),
+                          l.jsx("p", {
+                            children:
+                              "Taranna doesn't separate the personal from the professional — her foundation, her poems, her talks, and her photographs all come from the same place, and she'd rather show up authentically than perform confidence she doesn't feel. That's the thread running through everything she builds.",
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                  l.jsxs(X.div, {
+                    initial: { opacity: 0, y: 20 },
+                    whileInView: { opacity: 1, y: 0 },
+                    viewport: { once: !0 },
+                    transition: { duration: 0.8, delay: 0.3 },
+                    className: "grid grid-cols-2 md:grid-cols-4 gap-4 mt-4",
+                    children: [
+                      l.jsxs("div", {
+                        className:
+                          "p-4 bg-white/60 border border-neutral-100 rounded-2xl flex flex-col gap-2 shadow-xs",
+                        children: [
+                          l.jsx("div", {
+                            className:
+                              "w-8 h-8 rounded-lg bg-[#0e5fa3]/10 flex items-center justify-center text-[#0e5fa3]",
+                            children: l.jsx(ba, { className: "w-4 h-4" }),
+                          }),
+                          l.jsx("span", {
+                            className:
+                              "font-mono text-[9px] tracking-widest text-[#0e5fa3] font-bold block uppercase",
+                            children: "SAMPOORNA",
+                          }),
+                          l.jsx("span", {
+                            className:
+                              "font-heading text-xs text-neutral-800 font-bold uppercase",
+                            children: "Welfare Loop",
+                          }),
+                        ],
+                      }),
+                      l.jsxs("div", {
+                        className:
+                          "p-4 bg-white/60 border border-neutral-100 rounded-2xl flex flex-col gap-2 shadow-xs",
+                        children: [
+                          l.jsx("div", {
+                            className:
+                              "w-8 h-8 rounded-lg bg-[#E65F1B]/10 flex items-center justify-center text-[#E65F1B]",
+                            children: l.jsx($x, { className: "w-4 h-4" }),
+                          }),
+                          l.jsx("span", {
+                            className:
+                              "font-mono text-[9px] tracking-widest text-[#E65F1B] font-bold block uppercase",
+                            children: "FREE VERSE",
+                          }),
+                          l.jsx("span", {
+                            className:
+                              "font-heading text-xs text-neutral-800 font-bold uppercase",
+                            children: "Confessional",
+                          }),
+                        ],
+                      }),
+                      l.jsxs("div", {
+                        className:
+                          "p-4 bg-white/60 border border-neutral-100 rounded-2xl flex flex-col gap-2 shadow-xs",
+                        children: [
+                          l.jsx("div", {
+                            className:
+                              "w-8 h-8 rounded-lg bg-[#0a8fa0]/10 flex items-center justify-center text-[#0a8fa0]",
+                            children: l.jsx(Rx, { className: "w-4 h-4" }),
+                          }),
+                          l.jsx("span", {
+                            className:
+                              "font-mono text-[9px] tracking-widest text-[#0a8fa0] font-bold block uppercase",
+                            children: "SOMATIC",
+                          }),
+                          l.jsx("span", {
+                            className:
+                              "font-heading text-xs text-neutral-800 font-bold uppercase",
+                            children: "Vocal Stage",
+                          }),
+                        ],
+                      }),
+                      l.jsxs("div", {
+                        className:
+                          "p-4 bg-white/60 border border-neutral-100 rounded-2xl flex flex-col gap-2 shadow-xs",
+                        children: [
+                          l.jsx("div", {
+                            className:
+                              "w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-600",
+                            children: l.jsx(Wo, { className: "w-4 h-4" }),
+                          }),
+                          l.jsx("span", {
+                            className:
+                              "font-mono text-[9px] tracking-widest text-amber-600 font-bold block uppercase",
+                            children: "PLUS-SIZE",
+                          }),
+                          l.jsx("span", {
+                            className:
+                              "font-heading text-xs text-neutral-800 font-bold uppercase",
+                            children: "Representation",
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          }),
+        ],
+      }),
+    ],
+  });
 }
+
+
+export default GA;

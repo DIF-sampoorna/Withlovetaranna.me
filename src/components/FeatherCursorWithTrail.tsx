@@ -1,255 +1,211 @@
-import React, { useState, useEffect, useRef } from "react";
-import { motion } from "motion/react";
+import * as React from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
+const l = { jsx, jsxs, Fragment };
+import { motion as X } from 'motion/react';
+import * as k from 'react';
 
-export default function FeatherCursorWithTrail() {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
-  const [rotation, setRotation] = useState(0);
-  const [isHovering, setIsHovering] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const particlesRef = useRef<any[]>([]);
-
-  // Check if cursor should be enabled (only on devices with pointers, e.g. desktop/laptop)
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(pointer: fine)");
-    if (mediaQuery.matches) {
-      setIsEnabled(true);
-    }
-    
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (e.matches) setIsEnabled(true);
-    };
-    
-    mediaQuery.addEventListener("change", handleChange);
-
-    // Backup to enable custom cursor when movement is detected
-    const handleInitialMouseMove = () => {
-      setIsEnabled(true);
-      window.removeEventListener("mousemove", handleInitialMouseMove);
-    };
-    window.addEventListener("mousemove", handleInitialMouseMove);
-
-    return () => {
-      mediaQuery.removeEventListener("change", handleChange);
-      window.removeEventListener("mousemove", handleInitialMouseMove);
-    };
-  }, []);
-
-  // Add global style class to body
-  useEffect(() => {
-    if (isEnabled) {
-      document.body.classList.add("custom-cursor-active");
-      return () => {
-        document.body.classList.remove("custom-cursor-active");
-      };
-    }
-  }, [isEnabled]);
-
-  // Track coordinates, calculate dynamic rotation based on motion, and stardust emission
-  useEffect(() => {
-    if (!isEnabled) return;
-
-    let lastX = 0;
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-
-      // Gentle rotation based on velocity
-      const dx = e.clientX - lastX;
-      lastX = e.clientX;
-      const targetRotation = Math.min(Math.max(dx * 1.0, -22), 22);
-      setRotation(targetRotation);
-
-      // Detect hover on interactive elements
-      const target = e.target as HTMLElement | null;
-      if (target) {
-        const hasInteractiveParent = !!target.closest(
-          'a, button, [role="button"], input, select, textarea, .cursor-pointer, [onclick]'
-        );
-        setIsHovering(hasInteractiveParent);
-      }
-
-      // Spawn colorful magical stardust trail matching both golden & purple aesthetics
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-
-      const particleColors = [
-        "rgba(251, 191, 36, ",  // Gold
-        "rgba(245, 158, 11, ",  // Amber
-        "rgba(254, 240, 138, ", // Champagne Yellow
-        "rgba(168, 85, 247, ",  // Magic Purple
-        "rgba(192, 38, 211, ",  // Amethyst Fuchsia
-        "rgba(255, 255, 255, "  // Brilliant Star White
-      ];
-
-      const count = Math.floor(Math.random() * 3) + 2; // 2 to 4 particles per mouse move
-      for (let i = 0; i < count; i++) {
-        const colorBase = particleColors[Math.floor(Math.random() * particleColors.length)];
-        const isStar = Math.random() > 0.45; // mix stars and standard spark dust
-        
-        particlesRef.current.push({
-          x: e.clientX,
-          y: e.clientY,
-          vx: (Math.random() * 2.2 - 1.1),
-          vy: (Math.random() * 2.2 - 1.1) - 0.5, // drift slightly upward
-          size: Math.random() * 2.2 + 1.6,
-          alpha: 1.0,
-          decay: Math.random() * 0.016 + 0.012,
-          colorBase,
-          isStar,
-          angle: Math.random() * Math.PI * 2,
-          spin: Math.random() * 0.08 - 0.04
-        });
-      }
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [isEnabled]);
-
-  // Canvas drawing loop
-  useEffect(() => {
-    if (!isEnabled) return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-
-    let animId: number;
-
-    const drawStar = (cx: number, cy: number, spikes: number, outerRadius: number, innerRadius: number) => {
-      let rot = (Math.PI / 2) * 3;
-      let x = cx;
-      let y = cy;
-      const step = Math.PI / spikes;
-
-      ctx.beginPath();
-      ctx.moveTo(cx, cy - outerRadius);
-      for (let i = 0; i < spikes; i++) {
-        x = cx + Math.cos(rot) * outerRadius;
-        y = cy + Math.sin(rot) * outerRadius;
-        ctx.lineTo(x, y);
-        rot += step;
-
-        x = cx + Math.cos(rot) * innerRadius;
-        y = cy + Math.sin(rot) * innerRadius;
-        ctx.lineTo(x, y);
-        rot += step;
-      }
-      ctx.lineTo(cx, cy - outerRadius);
-      ctx.closePath();
-    };
-
-    const updateParticles = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      const particles = particlesRef.current;
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.alpha -= p.decay;
-        p.size -= 0.022;
-        p.angle += p.spin;
-
-        // Air resistance / friction
-        p.vx *= 0.98;
-        p.vy *= 0.98;
-
-        if (p.alpha <= 0 || p.size <= 0) {
-          particles.splice(i, 1);
-          continue;
-        }
-
-        ctx.save();
-        ctx.globalAlpha = p.alpha;
-        ctx.fillStyle = `${p.colorBase}${p.alpha})`;
-        
-        ctx.shadowBlur = p.size * 2.5;
-        ctx.shadowColor = p.colorBase.replace(", ", ")");
-
-        if (p.isStar) {
-          ctx.translate(p.x, p.y);
-          ctx.rotate(p.angle);
-          drawStar(0, 0, 4, p.size, p.size * 0.35);
-          ctx.fill();
-        } else {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size * 0.75, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.restore();
-      }
-
-      animId = requestAnimationFrame(updateParticles);
-    };
-
-    animId = requestAnimationFrame(updateParticles);
-
-    return () => {
-      window.removeEventListener("resize", resizeCanvas);
-      cancelAnimationFrame(animId);
-    };
-  }, [isEnabled]);
-
-  if (!isEnabled) return null;
-
+function WA() {
+  const [e, t] = k.useState(!1),
+    [n, r] = k.useState({ x: -100, y: -100 }),
+    [s, i] = k.useState(0),
+    [o, a] = k.useState(!1),
+    u = k.useRef(null),
+    c = k.useRef([]);
   return (
-    <>
-      {/* Global overrides to hide browser default cursor */}
-      <style>{`
+    k.useEffect(() => {
+      const d = window.matchMedia("(pointer: fine)");
+      d.matches && t(!0);
+      const f = (x) => {
+        x.matches && t(!0);
+      };
+      d.addEventListener("change", f);
+      const h = () => {
+        (t(!0), window.removeEventListener("mousemove", h));
+      };
+      return (
+        window.addEventListener("mousemove", h),
+        () => {
+          (d.removeEventListener("change", f),
+            window.removeEventListener("mousemove", h));
+        }
+      );
+    }, []),
+    k.useEffect(() => {
+      if (e)
+        return (
+          document.body.classList.add("custom-cursor-active"),
+          () => {
+            document.body.classList.remove("custom-cursor-active");
+          }
+        );
+    }, [e]),
+    k.useEffect(() => {
+      if (!e) return;
+      let d = 0;
+      const f = (h) => {
+        r({ x: h.clientX, y: h.clientY });
+        const x = h.clientX - d;
+        d = h.clientX;
+        const w = Math.min(Math.max(x * 1, -22), 22);
+        i(w);
+        const v = h.target;
+        if (v) {
+          const g = !!v.closest(
+            'a, button, [role="button"], input, select, textarea, .cursor-pointer, [onclick]',
+          );
+          a(g);
+        }
+        if (!u.current) return;
+        const p = [
+            "rgba(251, 191, 36, ",
+            "rgba(245, 158, 11, ",
+            "rgba(254, 240, 138, ",
+            "rgba(168, 85, 247, ",
+            "rgba(192, 38, 211, ",
+            "rgba(255, 255, 255, ",
+          ],
+          m = Math.floor(Math.random() * 3) + 2;
+        for (let g = 0; g < m; g++) {
+          const b = p[Math.floor(Math.random() * p.length)],
+            S = Math.random() > 0.45;
+          c.current.push({
+            x: h.clientX,
+            y: h.clientY,
+            vx: Math.random() * 2.2 - 1.1,
+            vy: Math.random() * 2.2 - 1.1 - 0.5,
+            size: Math.random() * 2.2 + 1.6,
+            alpha: 1,
+            decay: Math.random() * 0.016 + 0.012,
+            colorBase: b,
+            isStar: S,
+            angle: Math.random() * Math.PI * 2,
+            spin: Math.random() * 0.08 - 0.04,
+          });
+        }
+      };
+      return (
+        window.addEventListener("mousemove", f),
+        () => window.removeEventListener("mousemove", f)
+      );
+    }, [e]),
+    k.useEffect(() => {
+      if (!e) return;
+      const d = u.current;
+      if (!d) return;
+      const f = d.getContext("2d");
+      if (!f) return;
+      const h = () => {
+        ((d.width = window.innerWidth), (d.height = window.innerHeight));
+      };
+      (h(), window.addEventListener("resize", h));
+      let x;
+      const w = (y, p, m, g, b) => {
+          let S = (Math.PI / 2) * 3,
+            j = y,
+            N = p;
+          const T = Math.PI / m;
+          (f.beginPath(), f.moveTo(y, p - g));
+          for (let R = 0; R < m; R++)
+            ((j = y + Math.cos(S) * g),
+              (N = p + Math.sin(S) * g),
+              f.lineTo(j, N),
+              (S += T),
+              (j = y + Math.cos(S) * b),
+              (N = p + Math.sin(S) * b),
+              f.lineTo(j, N),
+              (S += T));
+          (f.lineTo(y, p - g), f.closePath());
+        },
+        v = () => {
+          f.clearRect(0, 0, d.width, d.height);
+          const y = c.current;
+          for (let p = y.length - 1; p >= 0; p--) {
+            const m = y[p];
+            if (
+              ((m.x += m.vx),
+              (m.y += m.vy),
+              (m.alpha -= m.decay),
+              (m.size -= 0.022),
+              (m.angle += m.spin),
+              (m.vx *= 0.98),
+              (m.vy *= 0.98),
+              m.alpha <= 0 || m.size <= 0)
+            ) {
+              y.splice(p, 1);
+              continue;
+            }
+            (f.save(),
+              (f.globalAlpha = m.alpha),
+              (f.fillStyle = `${m.colorBase}${m.alpha})`),
+              (f.shadowBlur = m.size * 2.5),
+              (f.shadowColor = m.colorBase.replace(", ", ")")),
+              m.isStar
+                ? (f.translate(m.x, m.y),
+                  f.rotate(m.angle),
+                  w(0, 0, 4, m.size, m.size * 0.35),
+                  f.fill())
+                : (f.beginPath(),
+                  f.arc(m.x, m.y, m.size * 0.75, 0, Math.PI * 2),
+                  f.fill()),
+              f.restore());
+          }
+          x = requestAnimationFrame(v);
+        };
+      return (
+        (x = requestAnimationFrame(v)),
+        () => {
+          (window.removeEventListener("resize", h), cancelAnimationFrame(x));
+        }
+      );
+    }, [e]),
+    e
+      ? l.jsxs(l.Fragment, {
+          children: [
+            l.jsx("style", {
+              children: `
         .custom-cursor-active,
         .custom-cursor-active * {
           cursor: none !important;
         }
-      `}</style>
-
-      {/* High-performance canvas for drawing stardust */}
-      <canvas
-        ref={canvasRef}
-        className="fixed inset-0 w-full h-full pointer-events-none z-[9999]"
-      />
-
-      {/* High-fidelity custom straight golden feather quill cursor using golden-feather-pen.png */}
-      <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[10000] mix-blend-normal select-none"
-        style={{
-          x: mousePos.x,
-          y: mousePos.y,
-          // Since the nib of the golden-feather-pen.png is at the bottom-left corner,
-          // we align the hotspot precisely at the bottom-left tip of the image.
-          translateX: "0%",
-          translateY: "-100%",
-          originX: 0,
-          originY: 1,
-        }}
-        animate={{
-          rotate: rotation,
-          scale: isHovering ? 1.25 : 1.0,
-        }}
-        transition={{
-          type: "spring",
-          damping: 28,
-          stiffness: 350,
-          mass: 0.06
-        }}
-      >
-        <img
-          src="/golden-feather-pen.png"
-          alt="Golden Feather Quill"
-          className="w-[72px] h-[72px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.25)]"
-          referrerPolicy="no-referrer"
-        />
-      </motion.div>
-    </>
+      `,
+            }),
+            l.jsx("canvas", {
+              ref: u,
+              className:
+                "fixed inset-0 w-full h-full pointer-events-none z-[9999]",
+            }),
+            l.jsx(X.div, {
+              className:
+                "fixed top-0 left-0 pointer-events-none z-[10000] mix-blend-normal select-none",
+              style: {
+                x: n.x,
+                y: n.y,
+                translateX: "0%",
+                translateY: "-100%",
+                originX: 0,
+                originY: 1,
+              },
+              animate: { rotate: s, scale: o ? 1.25 : 1 },
+              transition: {
+                type: "spring",
+                damping: 28,
+                stiffness: 350,
+                mass: 0.06,
+              },
+              children: l.jsx("img", {
+                src: "/golden-feather-pen.png",
+                alt: "Golden Feather Quill",
+                className:
+                  "w-[72px] h-[72px] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.25)]",
+                referrerPolicy: "no-referrer",
+              }),
+            }),
+          ],
+        })
+      : null
   );
 }
+
+
+export default WA;
