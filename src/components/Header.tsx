@@ -14,13 +14,19 @@ const Lh = [
   { id: "gallery", num: ".06", label: "GALLERY" },
 ];
 
+const isDev = typeof window !== 'undefined' && (
+  window.location.hostname.includes('localhost') || 
+  window.location.hostname.includes('ais-dev-') ||
+  window.location.search.includes('dev=true')
+);
+
 function i2({ currentView: e = "home", setCurrentView: t }) {
   const [n, r] = k.useState("home"),
     [s, i] = k.useState(!1),
     [o, a] = k.useState(!1),
     [u, c] = k.useState(!1),
     [d, f] = k.useState(
-      () => localStorage.getItem("collage_layout_locked") === "true",
+      () => !isDev || localStorage.getItem("collage_layout_locked") === "true",
     );
   k.useEffect(() => {
     const v = (p) => {
@@ -100,7 +106,7 @@ function i2({ currentView: e = "home", setCurrentView: t }) {
           l.jsxs("div", {
             className: "flex items-center gap-4",
             children: [
-              e === "home" &&
+              e === "home" && isDev &&
                 l.jsxs(l.Fragment, {
                   children: [
                     u &&

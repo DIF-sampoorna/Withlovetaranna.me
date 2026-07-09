@@ -35,6 +35,12 @@ const kl = {
   11: { scale: 10, offsetX: -33, offsetY: 0 },
 };
 
+const isDev = typeof window !== 'undefined' && (
+  window.location.hostname.includes('localhost') || 
+  window.location.hostname.includes('ais-dev-') ||
+  window.location.search.includes('dev=true')
+);
+
 function uP({
   currentImageUrl: e = "/taranna.png",
   blendMode: t = "normal",
@@ -44,29 +50,33 @@ function uP({
 }) {
   var Ue, _, P, L, $, K;
   const [i, o] = k.useState(1),
-    [a, u] = k.useState(!1),
+    [a, u] = k.useState(false),
     [c, d] = k.useState(!0),
     [f, h] = k.useState(0),
     [x, w] = k.useState(!1),
     [v, y] = k.useState({}),
+    [containerWidth, setContainerWidth] = k.useState(640),
+    scaleFactor = containerWidth / 640 || 1,
     p = k.useRef(null),
     [m, g] = k.useState(
-      () => localStorage.getItem("collage_layout_locked") !== "false",
+      () => !isDev || localStorage.getItem("collage_layout_locked") !== "false",
     );
   k.useEffect(() => {
     const E = () => {
+        if (!isDev) return;
         u((G) => !G);
       },
       D = (G) => {
+        if (!isDev) return;
         G.detail !== void 0 ? g(G.detail) : g((We) => !We);
       },
       B = () => {
         setTimeout(() => {
           (window.dispatchEvent(
-            new CustomEvent("dev-mode-changed", { detail: a }),
+            new CustomEvent("dev-mode-changed", { detail: isDev ? a : false }),
           ),
             window.dispatchEvent(
-              new CustomEvent("dev-lock-changed", { detail: m }),
+              new CustomEvent("dev-lock-changed", { detail: isDev ? m : true }),
             ));
         }, 0);
       };
@@ -74,9 +84,9 @@ function uP({
       window.addEventListener("toggle-dev-lock", D),
       window.addEventListener("request-dev-state", B));
     const me = setTimeout(() => {
-      (window.dispatchEvent(new CustomEvent("dev-mode-changed", { detail: a })),
+      (window.dispatchEvent(new CustomEvent("dev-mode-changed", { detail: isDev ? a : false })),
         window.dispatchEvent(
-          new CustomEvent("dev-lock-changed", { detail: m }),
+          new CustomEvent("dev-lock-changed", { detail: isDev ? m : true }),
         ));
     }, 0);
     return () => {
@@ -87,6 +97,7 @@ function uP({
     };
   }, [a, m]);
   const [b, S] = k.useState(() => {
+    if (!isDev) return kl;
     const E = localStorage.getItem("collage_image_settings");
     if (E)
       try {
@@ -101,11 +112,30 @@ function uP({
     return kl;
   });
   (k.useEffect(() => {
-    localStorage.setItem("collage_image_settings", JSON.stringify(b));
+    if (isDev) {
+      localStorage.setItem("collage_image_settings", JSON.stringify(b));
+    }
   }, [b]),
     k.useEffect(() => {
-      localStorage.setItem("collage_layout_locked", String(m));
-    }, [m]));
+      if (isDev) {
+        localStorage.setItem("collage_layout_locked", String(m));
+      }
+    }, [m]),
+    k.useEffect(() => {
+      const el = p.current;
+      if (!el) return;
+      const observer = new ResizeObserver((entries) => {
+        for (let entry of entries) {
+          if (entry.contentRect.width) {
+            setContainerWidth(entry.contentRect.width);
+          }
+        }
+      });
+      observer.observe(el);
+      return () => {
+        observer.disconnect();
+      };
+    }, []));
   const [j, N] = k.useState(null),
     T = (E, D) => {
       if (!a || m) return;
@@ -129,8 +159,8 @@ function uP({
         ...me,
         [j.cellIdx]: {
           ...me[j.cellIdx],
-          offsetX: Math.round(j.startOffsetX + D),
-          offsetY: Math.round(j.startOffsetY + B),
+          offsetX: Math.round(j.startOffsetX + D / scaleFactor),
+          offsetY: Math.round(j.startOffsetY + B / scaleFactor),
         },
       }));
     },
@@ -160,8 +190,8 @@ function uP({
         ...G,
         [j.cellIdx]: {
           ...G[j.cellIdx],
-          offsetX: Math.round(j.startOffsetX + B),
-          offsetY: Math.round(j.startOffsetY + me),
+          offsetX: Math.round(j.startOffsetX + B / scaleFactor),
+          offsetY: Math.round(j.startOffsetY + me / scaleFactor),
         },
       }));
     };
@@ -325,7 +355,7 @@ const SAVED_SETTINGS = ${JSON.stringify(b, null, 2)};`;
                                 mixBlendMode:
                                   t === "multiply" ? "multiply" : "normal",
                                 filter: `contrast(${n}) brightness(${r}) saturate(${s})`,
-                                transform: `translate(-50%, -50%) translate(${G.offsetX}px, ${G.offsetY}px) scale(${G.scale / 100})`,
+                                transform: `translate(-50%, -50%) translate(${G.offsetX * scaleFactor}px, ${G.offsetY * scaleFactor}px) scale(${G.scale / 100})`,
                                 opacity: we ? 0.65 : 1,
                                 outline: we ? "2px dashed #f59e0b" : "none",
                                 outlineOffset: "-2px",
@@ -342,7 +372,7 @@ const SAVED_SETTINGS = ${JSON.stringify(b, null, 2)};`;
                                   t === "multiply" ? "multiply" : "normal",
                                 filter: `contrast(${n}) brightness(${r}) saturate(${s})`,
                                 objectFit: "fill",
-                                transform: `scale(${G.scale / 100}) translate(${G.offsetX}px, ${G.offsetY}px)`,
+                                transform: `scale(${G.scale / 100}) translate(${G.offsetX * scaleFactor}px, ${G.offsetY * scaleFactor}px)`,
                                 opacity: we ? 0.65 : 1,
                                 outline: we ? "2px dashed #f59e0b" : "none",
                                 outlineOffset: "-2px",
