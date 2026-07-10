@@ -5,6 +5,7 @@ const l = { jsx, jsxs };
 import { motion as X, useScroll as nP, useTransform as Sl } from 'motion/react';
 import { Sprout as n2, Pen as ZS, Mic as od, Camera as Vx } from 'lucide-react';
 import * as k from 'react';
+import CMSImage from './CMSImage';
 
 const dP = [
   {
@@ -106,10 +107,8 @@ function hP({ onNavigate: e }) {
                 l.jsxs("div", {
                   className: "absolute inset-0 w-full h-full bg-neutral-950",
                   children: [
-                    l.jsx("img", {
-                      src: d.image.startsWith("http")
-                        ? d.image
-                        : encodeURI(d.image),
+                    l.jsx(CMSImage, {
+                      originalSrc: d.image,
                       alt: d.label,
                       referrerPolicy: "no-referrer",
                       className: "w-full h-full object-cover",

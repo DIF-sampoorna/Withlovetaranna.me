@@ -5,6 +5,7 @@ const l = { jsx, jsxs, Fragment };
 import { motion as X, AnimatePresence as Vr } from 'motion/react';
 import { BookOpen as Rx, ChevronLeft as IS, ChevronRight as co, Compass as Lx, Film as US, Heart as ba, Image as WS, Mic as od, Sparkles as Wo, X as Bx, Maximize2 as KS, Play as Fx, Video as r2 } from 'lucide-react';
 import * as k from 'react';
+import CMSImage from './CMSImage';
 
 const _A = [
   {
@@ -339,8 +340,8 @@ function UA({ item: e, onClick: t }) {
     className:
       "relative w-56 h-36 md:w-80 md:h-52 bg-neutral-900 rounded-2xl overflow-hidden shadow-md border border-neutral-200/5 hover:border-white/10 group cursor-pointer shrink-0",
     children: [
-      l.jsx("img", {
-        src: e.thumbnail,
+      l.jsx(CMSImage, {
+        originalSrc: e.thumbnail,
         alt: e.title,
         draggable: "false",
         className:
@@ -709,8 +710,8 @@ function zA({ onBack: e }) {
                     "w-full md:w-[60%] bg-neutral-950 flex items-center justify-center relative aspect-video md:aspect-auto md:min-h-[500px] group/media",
                   children: [
                     r.type === "photo"
-                      ? l.jsx("img", {
-                          src: r.src,
+                      ? l.jsx(CMSImage, {
+                          originalSrc: r.src,
                           alt: r.title,
                           className:
                             "w-full h-full object-contain max-h-[50vh] md:max-h-[80vh] block",

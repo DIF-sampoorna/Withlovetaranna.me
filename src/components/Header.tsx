@@ -2,8 +2,11 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
 const l = { jsx, jsxs, Fragment };
-import { Lock as Du, LockOpen as Ix, Settings as t2, X as Bx, Menu as XS, ArrowUpRight as LS } from 'lucide-react';
+import { Lock as Du, LockOpen as Ix, Settings as t2, X as Bx, Menu as XS, ArrowUpRight as LS, ShieldCheck } from 'lucide-react';
 import * as k from 'react';
+import { useCMS } from './CMSContext';
+import CMSAdminModal from './CMSAdminModal';
+import CMSImage from './CMSImage';
 
 const Lh = [
   { id: "home", num: ".01", label: "HOME" },
@@ -21,6 +24,8 @@ const isDev = typeof window !== 'undefined' && (
 );
 
 function i2({ currentView: e = "home", setCurrentView: t }) {
+  const { isAdmin, isEditMode, setEditMode } = useCMS();
+  const [isCmsOpen, setIsCmsOpen] = k.useState(false);
   const [n, r] = k.useState("home"),
     [s, i] = k.useState(!1),
     [o, a] = k.useState(!1),
@@ -95,8 +100,8 @@ function i2({ currentView: e = "home", setCurrentView: t }) {
           l.jsx("div", {
             onClick: () => w("home"),
             className: "flex items-center gap-3 cursor-pointer group",
-            children: l.jsx("img", {
-              src: "/tarranalogo.png",
+            children: l.jsx(CMSImage, {
+              originalSrc: "/tarranalogo.png",
               alt: "NGO Logo",
               className:
                 "h-12 md:h-20 w-auto object-contain transition-transform duration-300 group-hover:scale-105 -ml-3 md:-ml-8",
@@ -106,34 +111,6 @@ function i2({ currentView: e = "home", setCurrentView: t }) {
           l.jsxs("div", {
             className: "flex items-center gap-4",
             children: [
-              e === "home" && isDev &&
-                l.jsxs(l.Fragment, {
-                  children: [
-                    u &&
-                      l.jsxs("button", {
-                        id: "btn-dev-lock-toggle",
-                        onClick: x,
-                        className: `flex items-center gap-2 px-4 py-2 rounded-full text-xs font-mono font-bold tracking-wider uppercase border transition-all duration-300 shadow-xs cursor-pointer ${d ? "bg-red-500 text-white border-red-600 hover:bg-red-600" : "bg-emerald-500 text-white border-emerald-600 hover:bg-emerald-600"}`,
-                        children: [
-                          d
-                            ? l.jsx(Du, { className: "w-3.5 h-3.5" })
-                            : l.jsx(Ix, { className: "w-3.5 h-3.5" }),
-                          d ? "Locked" : "Unlocked",
-                        ],
-                      }),
-                    l.jsxs("button", {
-                      id: "btn-dev-align-toggle",
-                      onClick: h,
-                      className: `flex items-center gap-2.5 px-4 py-2 rounded-full text-xs font-mono font-bold tracking-wider uppercase border transition-all duration-300 shadow-xs cursor-pointer ${u ? "bg-amber-500 text-white border-amber-600 hover:bg-amber-600 animate-pulse" : "bg-neutral-100 text-neutral-600 border-neutral-200 hover:bg-neutral-200"}`,
-                      children: [
-                        l.jsx(t2, {
-                          className: `w-3.5 h-3.5 ${u ? "animate-spin" : ""}`,
-                        }),
-                        u ? "Dev Mode Active" : "Adjust Image Positions",
-                      ],
-                    }),
-                  ],
-                }),
               l.jsx("button", {
                 onClick: () => i(!s),
                 className:
@@ -171,10 +148,11 @@ function i2({ currentView: e = "home", setCurrentView: t }) {
         l.jsx("div", {
           className:
             "absolute top-full inset-x-0 bg-white/95 backdrop-blur-md border-b border-neutral-200 shadow-xl px-6 py-8 z-50 pointer-events-auto animate-in fade-in slide-in-from-top-3 duration-300",
-          children: l.jsx("div", {
+          children: l.jsxs("div", {
             className: "max-w-4xl mx-auto",
-            children: l.jsx("div", {
-              className: "grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3",
+            children: [
+              l.jsx("div", {
+                className: "grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3",
               children: Lh.map((v) => {
                 const y = e === v.id || (e === "home" && n === v.id);
                 return l.jsxs(
@@ -208,8 +186,41 @@ function i2({ currentView: e = "home", setCurrentView: t }) {
                 );
               }),
             }),
-          }),
+            l.jsxs("div", {
+              className: "mt-6 pt-6 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between gap-4",
+              children: [
+                l.jsxs("div", {
+                  className: "flex items-center gap-2",
+                  children: [
+                    l.jsx("span", {
+                      className: `w-2 h-2 rounded-full ${isAdmin ? "bg-emerald-500 animate-pulse" : "bg-neutral-300"}`
+                    }),
+                    l.jsx("span", {
+                      className: "font-mono text-[10px] tracking-widest text-neutral-400 uppercase",
+                      children: isAdmin ? "Signed in as Administrator" : "Secure Admin Portal"
+                    })
+                  ]
+                }),
+                l.jsxs("button", {
+                  onClick: () => {
+                    i(false);
+                    setIsCmsOpen(true);
+                  },
+                  className: "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold tracking-wider uppercase border border-neutral-200 hover:bg-neutral-950 hover:text-white hover:border-neutral-950 transition-all duration-300 shadow-xs cursor-pointer bg-white",
+                  children: [
+                    l.jsx(ShieldCheck, { className: "w-3.5 h-3.5 text-amber-500" }),
+                    isAdmin ? "CMS Console Dashboard" : "Admin Login"
+                  ]
+                })
+              ]
+            })
+          ]
         }),
+      }),
+      l.jsx(CMSAdminModal, {
+        isOpen: isCmsOpen,
+        onClose: () => setIsCmsOpen(false)
+      })
     ],
   });
 }

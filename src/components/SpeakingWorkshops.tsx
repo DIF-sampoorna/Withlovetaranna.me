@@ -5,6 +5,7 @@ const l = { jsx, jsxs };
 import { motion as X, AnimatePresence as Vr } from 'motion/react';
 import { Check as Au, Heart as ba, ChevronRight as co, Play as Fx, Compass as Lx, Instagram as Mu, SlidersVertical as Ox, MessageSquare as qS, ExternalLink as Rh, ArrowLeft as RS, Volume2 as s2, Eye as zS, Youtube as Vh, Award as $S } from 'lucide-react';
 import * as k from 'react';
+import CMSImage from './CMSImage';
 
 function pP({ view: e, onBack: t, onNavigate: n }) {
   const [r, s] = k.useState(null),
@@ -506,8 +507,8 @@ but the skin I live in.`,
                                     className:
                                       "group relative rounded-2xl overflow-hidden aspect-[4/3] bg-neutral-150 border border-neutral-200/50 shadow-xs cursor-pointer",
                                     children: [
-                                      l.jsx("img", {
-                                        src: "/TD-004.jpg.jpeg",
+                                      l.jsx(CMSImage, {
+                                        originalSrc: "/TD-004.jpg.jpeg",
                                         alt: "Empowerment Camps",
                                         className:
                                           "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500",
@@ -543,8 +544,8 @@ but the skin I live in.`,
                                     className:
                                       "group relative rounded-2xl overflow-hidden aspect-[4/3] bg-neutral-150 border border-neutral-200/50 shadow-xs cursor-pointer",
                                     children: [
-                                      l.jsx("img", {
-                                        src: "/TD-263.jpg.jpeg",
+                                      l.jsx(CMSImage, {
+                                        originalSrc: "/TD-263.jpg.jpeg",
                                         alt: "Wellness Loops",
                                         className:
                                           "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500",
@@ -580,8 +581,8 @@ but the skin I live in.`,
                                     className:
                                       "group relative rounded-2xl overflow-hidden aspect-[4/3] bg-neutral-150 border border-neutral-200/50 shadow-xs cursor-pointer",
                                     children: [
-                                      l.jsx("img", {
-                                        src: "/Speaker.JPG.jpeg",
+                                      l.jsx(CMSImage, {
+                                        originalSrc: "/Speaker.JPG.jpeg",
                                         alt: "Coordination and Leadership",
                                         className:
                                           "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500",
@@ -908,8 +909,8 @@ but the skin I live in.`,
                                 className:
                                   "group relative rounded-2xl overflow-hidden aspect-[3/4] bg-neutral-150 border border-neutral-200/50 shadow-xs cursor-pointer",
                                 children: [
-                                  l.jsx("img", {
-                                    src: "/Writer.jpg.jpeg",
+                                  l.jsx(CMSImage, {
+                                    originalSrc: "/Writer.jpg.jpeg",
                                     alt: "Poetics in Chiaroscuro",
                                     className:
                                       "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500",
@@ -945,8 +946,8 @@ but the skin I live in.`,
                                 className:
                                   "group relative rounded-2xl overflow-hidden aspect-[3/4] bg-neutral-150 border border-neutral-200/50 shadow-xs cursor-pointer",
                                 children: [
-                                  l.jsx("img", {
-                                    src: "/Writer.jpg.jpeg",
+                                  l.jsx(CMSImage, {
+                                    originalSrc: "/Writer.jpg.jpeg",
                                     alt: "Silent Room",
                                     className:
                                       "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500",
@@ -982,8 +983,8 @@ but the skin I live in.`,
                                 className:
                                   "group relative rounded-2xl overflow-hidden aspect-[3/4] bg-neutral-150 border border-neutral-200/50 shadow-xs cursor-pointer",
                                 children: [
-                                  l.jsx("img", {
-                                    src: "/TD-382.jpg.jpeg",
+                                  l.jsx(CMSImage, {
+                                    originalSrc: "/TD-382.jpg.jpeg",
                                     alt: "Intense Sincerity",
                                     className:
                                       "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500",
@@ -1256,8 +1257,8 @@ that is already who you are?`,
                                 className:
                                   "group relative rounded-2xl overflow-hidden aspect-[4/3] bg-neutral-150 border border-neutral-200/50 shadow-xs cursor-pointer",
                                 children: [
-                                  l.jsx("img", {
-                                    src: "/Speaker.JPG.jpeg",
+                                  l.jsx(CMSImage, {
+                                    originalSrc: "/Speaker.JPG.jpeg",
                                     alt: "Vocalizing Struggles",
                                     className:
                                       "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500",
@@ -1293,8 +1294,8 @@ that is already who you are?`,
                                 className:
                                   "group relative rounded-2xl overflow-hidden aspect-[4/3] bg-neutral-150 border border-neutral-200/50 shadow-xs cursor-pointer",
                                 children: [
-                                  l.jsx("img", {
-                                    src: "/Speaker.JPG.jpeg",
+                                  l.jsx(CMSImage, {
+                                    originalSrc: "/Speaker.JPG.jpeg",
                                     alt: "Sculpted Poise",
                                     className:
                                       "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500",
@@ -1330,8 +1331,8 @@ that is already who you are?`,
                                 className:
                                   "group relative rounded-2xl overflow-hidden aspect-[4/3] bg-neutral-150 border border-neutral-200/50 shadow-xs cursor-pointer",
                                 children: [
-                                  l.jsx("img", {
-                                    src: "/NOV00034.JPG.jpeg",
+                                  l.jsx(CMSImage, {
+                                    originalSrc: "/NOV00034.JPG.jpeg",
                                     alt: "Dialogue Session",
                                     className:
                                       "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500",
@@ -2156,8 +2157,8 @@ that is already who you are?`,
                                 className:
                                   "relative rounded-xl overflow-hidden aspect-square group cursor-pointer bg-neutral-900 border border-neutral-100",
                                 children: [
-                                  l.jsx("img", {
-                                    src: A.image,
+                                  l.jsx(CMSImage, {
+                                    originalSrc: A.image,
                                     alt: "Campaign",
                                     referrerPolicy: "no-referrer",
                                     className:
@@ -2711,9 +2712,9 @@ that is already who you are?`,
                   }),
                   l.jsx("div", {
                     className:
-                      "w-full md:w-3/5 aspect-square relative rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-900",
-                    children: l.jsx("img", {
-                      src: N,
+                       "w-full md:w-3/5 aspect-square relative rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-900",
+                    children: l.jsx(CMSImage, {
+                      originalSrc: N || "",
                       alt: "Portfolio Zoom",
                       referrerPolicy: "no-referrer",
                       className: "w-full h-full object-cover transition-all",

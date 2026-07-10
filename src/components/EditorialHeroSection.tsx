@@ -46,7 +46,7 @@ function cP() {
           className:
             "w-[290px] sm:w-[450px] md:w-[560px] lg:w-[672px] max-w-full flex items-center justify-center shrink-0",
           children: l.jsx(uP, {
-            currentImageUrl: "/taranna.png",
+            currentImageUrl: "/tar-col.png",
             blendMode: e,
             contrast: n,
             brightness: s,

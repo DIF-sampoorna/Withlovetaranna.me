@@ -4,6 +4,7 @@ const l = { jsx, jsxs };
 import { motion as X } from 'motion/react';
 import { Sparkles as Wo, Heart as ba, Feather as $x, BookOpen as Rx } from 'lucide-react';
 import * as k from 'react';
+import CMSImage from './CMSImage';
 
 function GA() {
   return l.jsxs("section", {
@@ -62,8 +63,8 @@ function GA() {
                         className:
                           "aspect-[3/4] rounded-2xl overflow-hidden bg-neutral-100 relative",
                         children: [
-                          l.jsx("img", {
-                            src: "/NOV00034.JPG.jpeg",
+                          l.jsx(CMSImage, {
+                            originalSrc: "/NOV00034.JPG.jpeg",
                             alt: "Taranna Deepjyoti",
                             className:
                               "w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]",
@@ -107,8 +108,8 @@ function GA() {
                           l.jsx("div", {
                             className:
                               "aspect-square rounded-lg overflow-hidden bg-neutral-100",
-                            children: l.jsx("img", {
-                              src: "/TD-382.jpg.jpeg",
+                            children: l.jsx(CMSImage, {
+                              originalSrc: "/TD-382.jpg.jpeg",
                               alt: "Poise",
                               className: "w-full h-full object-cover",
                             }),
@@ -127,8 +128,8 @@ function GA() {
                           l.jsx("div", {
                             className:
                               "aspect-square rounded-lg overflow-hidden bg-neutral-100",
-                            children: l.jsx("img", {
-                              src: "/Writer.jpg.jpeg",
+                            children: l.jsx(CMSImage, {
+                              originalSrc: "/Writer.jpg.jpeg",
                               alt: "Writer",
                               className: "w-full h-full object-cover",
                             }),
