@@ -30,7 +30,7 @@ const dP = [
     id: "strategist",
     label: "PUBLIC SPEAKER",
     description: "A podcaster and speaker who talks about what most people avoid — shame, guilt, rejection — and invites people to feel it all the way through instead of around it.",
-    image: "/Speaker.JPG.jpeg",
+    image: "/tar-spe.png",
     icon: od,
     readMoreColor: "text-teal-400 hover:text-teal-300",
     objectPosition: "center 20%",
