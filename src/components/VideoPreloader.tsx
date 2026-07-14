@@ -8,6 +8,8 @@ import * as k from 'react';
 
 function BA({ onComplete: e }) {
   const [t, n] = k.useState(!1);
+  const videoRef = k.useRef<HTMLVideoElement>(null);
+
   k.useEffect(() => {
     const s = setTimeout(() => {
       n(!0);
@@ -16,6 +18,26 @@ function BA({ onComplete: e }) {
       clearTimeout(s);
     };
   }, []);
+
+  k.useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      // Programmatic muted/playsinline overrides to bypass strict iOS Safari restrictions
+      video.muted = true;
+      video.defaultMuted = true;
+      video.setAttribute('muted', '');
+      video.setAttribute('playsinline', 'true');
+      video.setAttribute('webkit-playsinline', 'true');
+      
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn("Autoplay blocked or failed on iOS:", err);
+        });
+      }
+    }
+  }, []);
+
   const r = () => {
     e();
   };
@@ -51,10 +73,12 @@ function BA({ onComplete: e }) {
                 "absolute inset-0 w-full h-full object-cover pointer-events-none opacity-20",
             }),
             l.jsx("video", {
+              ref: videoRef,
               src: "/vid.mp4",
               autoPlay: !0,
               muted: !0,
               playsInline: !0,
+              preload: "auto",
               onEnded: e,
               className:
                 "absolute inset-0 w-full h-full md:object-cover object-contain pointer-events-none mix-blend-normal",
