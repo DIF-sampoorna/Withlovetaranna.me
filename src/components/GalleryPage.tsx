@@ -3,220 +3,12 @@ import { useState, useEffect, useRef } from 'react';
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
 const l = { jsx, jsxs, Fragment };
 import { motion as X, AnimatePresence as Vr } from 'motion/react';
-import { BookOpen as Rx, ChevronLeft as IS, ChevronRight as co, Compass as Lx, Film as US, Heart as ba, Image as WS, Mic as od, Sparkles as Wo, X as Bx, Maximize2 as KS, Play as Fx, Video as r2 } from 'lucide-react';
+import { BookOpen as Rx, ChevronLeft as IS, ChevronRight as co, Compass as Lx, Film as US, Heart as ba, Image as WS, Mic as od, Sparkles as Wo, X as Bx, Maximize2 as KS, Play as Fx, Video as r2, Plus, Edit2, Trash2, Upload } from 'lucide-react';
 import * as k from 'react';
 import CMSImage from './CMSImage';
+import { useCMS, GalleryItem } from './CMSContext';
 
-const _A = [
-  {
-    id: "gal-model-1",
-    type: "photo",
-    src: "/Modle.JPG.jpeg",
-    thumbnail: "/Modle.JPG.jpeg",
-    title: "Unbound Presence",
-    category: "Model",
-    description:
-      "Reclaiming physical space with unshakeable dignity and softness, paving paths for radical body representation.",
-  },
-  {
-    id: "gal-model-2",
-    type: "photo",
-    src: "/TD-297.jpg.jpeg",
-    thumbnail: "/TD-297.jpg.jpeg",
-    title: "Textured Warmth",
-    category: "Model",
-    description:
-      "Elegant woolens and studio styling meeting soft, welcoming smiles that rewrite the narrative of high-fashion bodies.",
-  },
-  {
-    id: "gal-model-3",
-    type: "photo",
-    src: "/NOV00034.JPG.jpeg",
-    thumbnail: "/NOV00034.JPG.jpeg",
-    title: "Studio Amber Portrait",
-    category: "Model",
-    description:
-      "Warm-toned studio styling capturing beautiful interactions of light, texture, and relaxed confidence.",
-  },
-  {
-    id: "gal-model-4",
-    type: "photo",
-    src: "/NOVA0019.JPG.jpeg",
-    thumbnail: "/NOVA0019.JPG.jpeg",
-    title: "Poise & Elegance",
-    category: "Model",
-    description:
-      "Strong, soft, and unscripted. Representing the modern woman in spaces that once felt entirely exclusionary.",
-  },
-  {
-    id: "gal-model-5",
-    type: "photo",
-    src: "/taranna.png",
-    thumbnail: "/taranna.png",
-    title: "The Silhouette of Truth",
-    category: "Model",
-    description:
-      "The striking high-fashion silhouette representing the overarching golden thread running through all four domains.",
-  },
-  {
-    id: "gal-model-vid",
-    type: "video",
-    src: "https://www.youtube.com/embed/H_8y0SBy3H8",
-    thumbnail: "/Modle.JPG.jpeg",
-    title: "Radical Body Love & Representation",
-    category: "Model",
-    description:
-      "Reflections on reclaiming plus-size representation in high fashion and establishing healthy bodily relationships.",
-    youtubeId: "H_8y0SBy3H8",
-  },
-  {
-    id: "gal-writer-1",
-    type: "photo",
-    src: "/Writer.jpg.jpeg",
-    thumbnail: "/Writer.jpg.jpeg",
-    title: "Poetics in Chiaroscuro",
-    category: "Writer",
-    description:
-      "Contemplative shadows framing the write-up desk. Turning personal confession into shared, universal echoes.",
-  },
-  {
-    id: "gal-writer-2",
-    type: "photo",
-    src: "/NOVA0019.JPG.jpeg",
-    thumbnail: "/NOVA0019.JPG.jpeg",
-    title: "Silent Reflections",
-    category: "Writer",
-    description:
-      "Capturing a writer's transient state — where the next line of free verse begins to form inside the quiet room.",
-  },
-  {
-    id: "gal-writer-3",
-    type: "photo",
-    src: "/TD-382.jpg.jpeg",
-    thumbnail: "/TD-382.jpg.jpeg",
-    title: "Symmetrical Sincerity",
-    category: "Writer",
-    description:
-      "A focused, symmetrical gaze capturing quiet strength, vulnerability, and absolute conviction.",
-  },
-  {
-    id: "gal-writer-4",
-    type: "photo",
-    src: "/TD-297.jpg.jpeg",
-    thumbnail: "/TD-297.jpg.jpeg",
-    title: "Draped in Thoughts",
-    category: "Writer",
-    description:
-      "A portrait of quiet intensity where text and form find their shared rhythm.",
-  },
-  {
-    id: "gal-writer-vid",
-    type: "video",
-    src: "https://www.youtube.com/embed/psN1DORYYV0",
-    thumbnail: "/TD-382.jpg.jpeg",
-    title: "Tarrana's Cinematic Journey",
-    category: "Writer",
-    description:
-      "The official cinematic overview of Tarrana's multi-room journey. Walk through the spaces that define writer, model, speaker, and entrepreneur.",
-    youtubeId: "psN1DORYYV0",
-  },
-  {
-    id: "gal-speaker-1",
-    type: "photo",
-    src: "/Speaker.JPG.jpeg",
-    thumbnail: "/Speaker.JPG.jpeg",
-    title: "The Speaking Frame",
-    category: "Speaker",
-    description:
-      "A moment of raw presence in front of the lens, reflecting on how we give voice to silent shame and hidden shadows.",
-  },
-  {
-    id: "gal-speaker-2",
-    type: "photo",
-    src: "/Speaker.JPG.jpeg",
-    thumbnail: "/Speaker.JPG.jpeg",
-    title: "Sculpted Shadow-Play",
-    category: "Speaker",
-    description:
-      "A monochrome block portrait demonstrating architectural lighting, texture, and visual design poise.",
-  },
-  {
-    id: "gal-speaker-3",
-    type: "photo",
-    src: "/NOV00034.JPG.jpeg",
-    thumbnail: "/NOV00034.JPG.jpeg",
-    title: "Authentic Somatic Dialogue",
-    category: "Speaker",
-    description:
-      "Answering somatic healing questions with deep resonance and clarity.",
-  },
-  {
-    id: "gal-speaker-vid-1",
-    type: "video",
-    src: "https://www.youtube.com/embed/_U0QvsnVfGg",
-    thumbnail: "/Speaker.JPG.jpeg",
-    title: "The Courage to Be Disliked",
-    category: "Speaker",
-    description:
-      "A compelling public presentation focusing on the freedom of standing in your individual truth, separate from external validation.",
-    youtubeId: "_U0QvsnVfGg",
-  },
-  {
-    id: "gal-speaker-vid-2",
-    type: "video",
-    src: "https://www.youtube.com/embed/psN1DORYYV0",
-    thumbnail: "/Writer.jpg.jpeg",
-    title: "Shame & Naming Shadows",
-    category: "Speaker",
-    description:
-      "Addressing social expectations, unvoiced grief, and the transformational step of naming our deepest shadows.",
-    youtubeId: "psN1DORYYV0",
-  },
-  {
-    id: "gal-welfare-1",
-    type: "photo",
-    src: "/TD-004.jpg.jpeg",
-    thumbnail: "/TD-004.jpg.jpeg",
-    title: "Grassroots Empathetic Reach",
-    category: "Welfare",
-    description:
-      "Active frontline leadership in Sampoorna, bringing health equity and empowerment directly to women in regional centers.",
-  },
-  {
-    id: "gal-welfare-2",
-    type: "photo",
-    src: "/TD-263.jpg.jpeg",
-    thumbnail: "/TD-263.jpg.jpeg",
-    title: "The Heart of Sampoorna",
-    category: "Welfare",
-    description:
-      "Deepjyoti Foundation's visionary healthcare loops, elevating families and building networks of persistent local aid.",
-  },
-  {
-    id: "gal-welfare-3",
-    type: "photo",
-    src: "/Speaker.JPG.jpeg",
-    thumbnail: "/Speaker.JPG.jpeg",
-    title: "Sampoorna Outreach Circle",
-    category: "Welfare",
-    description:
-      "Frontline advocacy session and systemic planning for grassroots community aid loops.",
-  },
-  {
-    id: "gal-welfare-vid",
-    type: "video",
-    src: "https://www.youtube.com/embed/_U0QvsnVfGg",
-    thumbnail: "/TD-263.jpg.jpeg",
-    title: "Welfare & Grassroots Outreach",
-    category: "Welfare",
-    description:
-      "Documenting the systemic aid, medical support camps, and long-term empowerment frameworks run by Deepjyoti India Foundation.",
-    youtubeId: "_U0QvsnVfGg",
-  },
-];
-
-
-function Qi({ items: e, direction: t, onItemClick: n }) {
+function Qi({ items: e, direction: t, onItemClick: n, onEditClick: editFn, onDeleteClick: deleteFn }) {
   const r = k.useRef(null),
     [s, i] = k.useState(!1),
     [o, a] = k.useState(0),
@@ -320,7 +112,7 @@ function Qi({ items: e, direction: t, onItemClick: n }) {
               "div",
               {
                 className: "px-3 md:px-4 shrink-0",
-                children: l.jsx(UA, { item: b, onClick: () => n(b) }),
+                children: l.jsx(UA, { item: b, onClick: () => n(b), onEditClick: editFn, onDeleteClick: deleteFn }),
               },
               `${b.id}-tripled-${S}`,
             ),
@@ -332,7 +124,9 @@ function Qi({ items: e, direction: t, onItemClick: n }) {
 }
 
 
-function UA({ item: e, onClick: t }) {
+function UA({ item: e, onClick: t, onEditClick: editFn, onDeleteClick: deleteFn }) {
+  const { isEditMode } = useCMS();
+
   return l.jsxs(X.div, {
     whileHover: { scale: 1.03, y: -4 },
     transition: { duration: 0.4, ease: "easeOut" },
@@ -354,7 +148,7 @@ function UA({ item: e, onClick: t }) {
       }),
       l.jsxs("div", {
         className:
-          "absolute inset-x-0 bottom-0 p-4 md:p-5 text-white flex flex-col gap-0.5 justify-end",
+          "absolute inset-x-0 bottom-0 p-4 md:p-5 text-white flex flex-col gap-0.5 justify-end z-10",
         children: [
           l.jsx("span", {
             className:
@@ -383,15 +177,489 @@ function UA({ item: e, onClick: t }) {
               : l.jsx(KS, { className: "w-4 h-4 text-neutral-900" }),
         }),
       }),
+      isEditMode && l.jsxs("div", {
+        className: "absolute top-3 right-3 flex gap-2 z-[30]",
+        onClick: (evt) => evt.stopPropagation(),
+        children: [
+          l.jsx("button", {
+            onClick: (evt) => {
+              evt.stopPropagation();
+              editFn(e);
+            },
+            className: "bg-white/95 hover:bg-white text-neutral-900 p-2 rounded-full shadow-lg border border-neutral-200 cursor-pointer hover:scale-110 active:scale-95 transition-all",
+            title: "Edit Item",
+            children: l.jsx(Edit2, { className: "w-3 h-3" })
+          }),
+          l.jsx("button", {
+            onClick: (evt) => {
+              evt.stopPropagation();
+              deleteFn(e.id);
+            },
+            className: "bg-red-500 hover:bg-red-650 text-white p-2 rounded-full shadow-lg cursor-pointer hover:scale-110 active:scale-95 transition-all",
+            title: "Delete Item",
+            children: l.jsx(Trash2, { className: "w-3 h-3" })
+          })
+        ]
+      })
     ],
   });
 }
 
 
+function GalleryItemEditorModal({ isOpen, onClose, item, onSave }) {
+  const [type, setType] = k.useState('photo');
+  const [src, setSrc] = k.useState('');
+  const [thumbnail, setThumbnail] = k.useState('');
+  const [title, setTitle] = k.useState('');
+  const [category, setCategory] = k.useState('Model');
+  const [description, setDescription] = k.useState('');
+  const [videoUrl, setVideoUrl] = k.useState('');
+  const [dragActive, setDragActive] = k.useState(false);
+  const [error, setError] = k.useState('');
+
+  k.useEffect(() => {
+    if (isOpen) {
+      if (item) {
+        setType(item.type);
+        setSrc(item.src);
+        setThumbnail(item.thumbnail);
+        setTitle(item.title);
+        setCategory(item.category);
+        setDescription(item.description);
+        setVideoUrl(item.type === 'video' ? (item.youtubeId ? `https://www.youtube.com/watch?v=${item.youtubeId}` : item.src) : '');
+      } else {
+        setType('photo');
+        setSrc('');
+        setThumbnail('');
+        setTitle('');
+        setCategory('Model');
+        setDescription('');
+        setVideoUrl('');
+      }
+      setError('');
+    }
+  }, [isOpen, item]);
+
+  if (!isOpen) return null;
+
+  const getYoutubeId = (url) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  const processFile = (file, field) => {
+    if (!file.type.startsWith('image/')) {
+      setError('File must be an image (PNG, JPG, JPEG, WEBP)');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image is too large. Max size is 5MB.');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const base64 = evt.target?.result;
+      if (base64 && typeof base64 === 'string') {
+        if (field === 'src') {
+          setSrc(base64);
+          if (type === 'photo') {
+            setThumbnail(base64);
+          }
+        } else {
+          setThumbnail(base64);
+        }
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleFileChange = (e, field) => {
+    if (e.target.files && e.target.files[0]) {
+      processFile(e.target.files[0], field);
+    }
+  };
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e, field) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      processFile(e.dataTransfer.files[0], field);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (!title.trim()) {
+      setError('Please provide a title');
+      return;
+    }
+    if (!description.trim()) {
+      setError('Please provide a description');
+      return;
+    }
+
+    let finalSrc = src;
+    let finalThumbnail = thumbnail;
+    let finalYoutubeId = undefined;
+
+    if (type === 'video') {
+      if (!videoUrl.trim()) {
+        setError('Please provide a YouTube link or video URL');
+        return;
+      }
+      const ytid = getYoutubeId(videoUrl);
+      if (ytid) {
+        finalYoutubeId = ytid;
+        finalSrc = `https://www.youtube.com/embed/${ytid}`;
+        if (!finalThumbnail) {
+          finalThumbnail = `https://img.youtube.com/vi/${ytid}/hqdefault.jpg`;
+        }
+      } else {
+        finalSrc = videoUrl;
+        if (!finalThumbnail) {
+          setError('Please upload or provide a thumbnail for this video');
+          return;
+        }
+      }
+    } else {
+      if (!src.trim()) {
+        setError('Please provide an image URL or upload an image file');
+        return;
+      }
+      if (!finalThumbnail) {
+        finalThumbnail = src;
+      }
+    }
+
+    onSave({
+      id: item?.id,
+      type,
+      src: finalSrc,
+      thumbnail: finalThumbnail,
+      title: title.trim(),
+      category,
+      description: description.trim(),
+      youtubeId: finalYoutubeId
+    });
+  };
+
+  return l.jsx("div", {
+    className: "fixed inset-0 bg-neutral-950/80 backdrop-blur-md z-[9999] flex items-center justify-center p-4 animate-in fade-in duration-300 pointer-events-auto",
+    onClick: onClose,
+    children: l.jsxs("div", {
+      className: "bg-[#FCFAF6] border border-neutral-200 w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl flex flex-col pointer-events-auto max-h-[90vh] animate-in slide-in-from-bottom-4 duration-300",
+      onClick: (evt) => evt.stopPropagation(),
+      children: [
+        l.jsxs("div", {
+          className: "px-6 py-5 border-b border-neutral-100 flex items-center justify-between bg-neutral-50",
+          children: [
+            l.jsx("h2", {
+              className: "font-heading font-bold text-base tracking-wider text-neutral-950 uppercase",
+              children: item ? 'Edit Gallery Item' : 'Add New Gallery Item'
+            }),
+            l.jsx("button", {
+              onClick: onClose,
+              className: "text-neutral-400 hover:text-neutral-700 transition-colors p-2 rounded-xl hover:bg-neutral-100 cursor-pointer",
+              children: l.jsx(Bx, { className: "w-4 h-4" })
+            })
+          ]
+        }),
+        l.jsxs("form", {
+          onSubmit: handleSubmit,
+          className: "flex-1 overflow-y-auto p-6 space-y-5",
+          children: [
+            error && l.jsx("div", {
+              className: "bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-xs font-mono font-medium",
+              children: error
+            }),
+            l.jsxs("div", {
+              className: "space-y-1.5",
+              children: [
+                l.jsx("label", {
+                  className: "text-[10px] font-mono tracking-wider uppercase font-bold text-neutral-500",
+                  children: "Media Format"
+                }),
+                l.jsxs("div", {
+                  className: "flex gap-3",
+                  children: [
+                    l.jsx("button", {
+                      type: "button",
+                      onClick: () => setType('photo'),
+                      className: `flex-1 py-3 px-4 rounded-xl text-xs font-mono font-bold uppercase border transition-all cursor-pointer ${type === 'photo' ? 'bg-neutral-950 text-white border-neutral-950 shadow-sm' : 'bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50'}`,
+                      children: "Photo"
+                    }),
+                    l.jsx("button", {
+                      type: "button",
+                      onClick: () => setType('video'),
+                      className: `flex-1 py-3 px-4 rounded-xl text-xs font-mono font-bold uppercase border transition-all cursor-pointer ${type === 'video' ? 'bg-neutral-950 text-white border-neutral-950 shadow-sm' : 'bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50'}`,
+                      children: "Video"
+                    })
+                  ]
+                })
+              ]
+            }),
+            l.jsxs("div", {
+              className: "space-y-1.5",
+              children: [
+                l.jsx("label", {
+                  className: "text-[10px] font-mono tracking-wider uppercase font-bold text-neutral-500",
+                  children: "Domain / Category"
+                }),
+                l.jsxs("select", {
+                  value: category,
+                  onChange: (evt) => setCategory(evt.target.value),
+                  className: "w-full bg-white border border-neutral-200 rounded-xl py-3 px-4 text-xs focus:outline-none focus:border-neutral-900 font-mono text-neutral-800",
+                  children: [
+                    l.jsx("option", { value: "Model", children: "Model (Domain .04 - Reclaiming physical gaze)" }),
+                    l.jsx("option", { value: "Writer", children: "Writer (Domain .02 - Poetics in quiet chiaroscuro)" }),
+                    l.jsx("option", { value: "Speaker", children: "Speaker (Domain .03 - Speech to naming shadows)" }),
+                    l.jsx("option", { value: "Welfare", children: "Welfare (Domain .01 - Social Entrepreneur frontline care)" })
+                  ]
+                })
+              ]
+            }),
+            l.jsxs("div", {
+              className: "space-y-1.5",
+              children: [
+                l.jsx("label", {
+                  className: "text-[10px] font-mono tracking-wider uppercase font-bold text-neutral-500",
+                  children: "Title"
+                }),
+                l.jsx("input", {
+                  type: "text",
+                  required: !0,
+                  value: title,
+                  onChange: (evt) => setTitle(evt.target.value),
+                  placeholder: "e.g. Unbound Presence",
+                  className: "w-full bg-white border border-neutral-200 rounded-xl py-3 px-4 text-xs focus:outline-none focus:border-neutral-900 text-neutral-800 font-medium"
+                })
+              ]
+            }),
+            l.jsxs("div", {
+              className: "space-y-1.5",
+              children: [
+                l.jsx("label", {
+                  className: "text-[10px] font-mono tracking-wider uppercase font-bold text-neutral-500",
+                  children: "Description"
+                }),
+                l.jsx("textarea", {
+                  required: !0,
+                  rows: 3,
+                  value: description,
+                  onChange: (evt) => setDescription(evt.target.value),
+                  placeholder: "Brief artistic description of this gallery piece...",
+                  className: "w-full bg-white border border-neutral-200 rounded-xl py-3 px-4 text-xs focus:outline-none focus:border-neutral-900 text-neutral-800 leading-relaxed"
+                })
+              ]
+            }),
+            type === 'photo' ? l.jsxs("div", {
+              className: "space-y-4",
+              children: [
+                l.jsxs("div", {
+                  className: "space-y-1.5",
+                  children: [
+                    l.jsx("label", {
+                      className: "text-[10px] font-mono tracking-wider uppercase font-bold text-neutral-500",
+                      children: "Image Source URL"
+                    }),
+                    l.jsx("input", {
+                      type: "url",
+                      value: src.startsWith('data:') ? '' : src,
+                      onChange: (evt) => {
+                        setSrc(evt.target.value);
+                        setThumbnail(evt.target.value);
+                      },
+                      placeholder: "Paste Image URL (or drag-and-drop a file below)",
+                      className: "w-full bg-white border border-neutral-200 rounded-xl py-3 px-4 text-xs focus:outline-none focus:border-neutral-900 text-neutral-800 font-mono"
+                    })
+                  ]
+                }),
+                l.jsxs("div", {
+                  className: "space-y-1.5",
+                  children: [
+                    l.jsxs("div", {
+                      onDragEnter: handleDrag,
+                      onDragOver: handleDrag,
+                      onDragLeave: handleDrag,
+                      onDrop: (evt) => handleDrop(evt, 'src'),
+                      className: `border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-350 flex flex-col items-center justify-center gap-2 ${dragActive ? 'border-amber-500 bg-amber-50/10 scale-99' : 'border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50/50'}`,
+                      onClick: () => document.getElementById('gal-image-file-input')?.click(),
+                      children: [
+                        l.jsx(Upload, { className: "w-5 h-5 text-neutral-400" }),
+                        l.jsxs("span", {
+                          className: "text-xs text-neutral-600 font-medium",
+                          children: [
+                            "Drag and drop your image file here, or ",
+                            l.jsx("span", { className: "text-[#0e5fa3] underline", children: "browse local files" })
+                          ]
+                        }),
+                        l.jsx("span", {
+                          className: "text-[10px] text-neutral-400 font-mono",
+                          children: "Supports PNG, JPG, JPEG, WEBP (Max 5MB)"
+                        }),
+                        l.jsx("input", {
+                          id: "gal-image-file-input",
+                          type: "file",
+                          accept: "image/*",
+                          className: "hidden",
+                          onChange: (evt) => handleFileChange(evt, 'src')
+                        })
+                      ]
+                    }),
+                    src && l.jsxs("div", {
+                      className: "mt-3 flex items-center gap-3 p-2 border border-neutral-100 bg-neutral-50 rounded-xl",
+                      children: [
+                        l.jsx("img", { src: src, className: "w-12 h-12 rounded-lg object-cover border border-neutral-200", alt: "Preview" }),
+                        l.jsxs("div", {
+                          className: "flex-1 min-w-0",
+                          children: [
+                            l.jsx("p", { className: "text-[10px] font-mono text-neutral-400 uppercase font-bold", children: "Image loaded successfully" }),
+                            l.jsx("p", { className: "text-xs text-neutral-600 truncate", children: src.startsWith('data:') ? 'Base64 Local Upload' : src })
+                          ]
+                        })
+                      ]
+                    })
+                  ]
+                })
+              ]
+            }) : l.jsxs("div", {
+              className: "space-y-4",
+              children: [
+                l.jsxs("div", {
+                  className: "space-y-1.5",
+                  children: [
+                    l.jsx("label", {
+                      className: "text-[10px] font-mono tracking-wider uppercase font-bold text-neutral-500",
+                      children: "YouTube Link or Video URL"
+                    }),
+                    l.jsx("input", {
+                      type: "url",
+                      required: !0,
+                      value: videoUrl,
+                      onChange: (evt) => setVideoUrl(evt.target.value),
+                      placeholder: "e.g. https://www.youtube.com/watch?v=psN1DORYYV0",
+                      className: "w-full bg-white border border-neutral-200 rounded-xl py-3 px-4 text-xs focus:outline-none focus:border-neutral-900 text-neutral-800 font-mono"
+                    }),
+                    l.jsx("p", {
+                      className: "text-[9px] text-neutral-400 font-mono",
+                      children: "If you enter a valid YouTube link, we will automatically extract its thumbnail and embed code!"
+                    })
+                  ]
+                }),
+                l.jsxs("div", {
+                  className: "space-y-1.5",
+                  children: [
+                    l.jsx("label", {
+                      className: "text-[10px] font-mono tracking-wider uppercase font-bold text-neutral-500",
+                      children: "Custom Thumbnail Image URL (Optional)"
+                    }),
+                    l.jsx("input", {
+                      type: "url",
+                      value: thumbnail.startsWith('data:') ? '' : thumbnail,
+                      onChange: (evt) => setThumbnail(evt.target.value),
+                      placeholder: "Paste thumbnail URL (otherwise auto-generated from YouTube)",
+                      className: "w-full bg-white border border-neutral-200 rounded-xl py-3 px-4 text-xs focus:outline-none focus:border-neutral-900 text-neutral-800 font-mono"
+                    })
+                  ]
+                }),
+                l.jsxs("div", {
+                  className: "space-y-1.5",
+                  children: [
+                    l.jsxs("div", {
+                      onDragEnter: handleDrag,
+                      onDragOver: handleDrag,
+                      onDragLeave: handleDrag,
+                      onDrop: (evt) => handleDrop(evt, 'thumbnail'),
+                      className: `border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition-all duration-350 flex flex-col items-center justify-center gap-1.5 ${dragActive ? 'border-amber-500 bg-amber-50/10 scale-99' : 'border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50/50'}`,
+                      onClick: () => document.getElementById('gal-thumb-file-input')?.click(),
+                      children: [
+                        l.jsx(Upload, { className: "w-5 h-5 text-neutral-400" }),
+                        l.jsxs("span", {
+                          className: "text-xs text-neutral-600 font-medium",
+                          children: [
+                            "Drag/drop thumbnail image or ",
+                            l.jsx("span", { className: "text-[#0e5fa3] underline", children: "browse local files" })
+                          ]
+                        }),
+                        l.jsx("input", {
+                          id: "gal-thumb-file-input",
+                          type: "file",
+                          accept: "image/*",
+                          className: "hidden",
+                          onChange: (evt) => handleFileChange(evt, 'thumbnail')
+                        })
+                      ]
+                    }),
+                    (thumbnail || videoUrl) && l.jsxs("div", {
+                      className: "mt-3 flex items-center gap-3 p-2 border border-neutral-100 bg-neutral-50 rounded-xl",
+                      children: [
+                        l.jsx("img", {
+                          src: thumbnail || (getYoutubeId(videoUrl) ? `https://img.youtube.com/vi/${getYoutubeId(videoUrl)}/hqdefault.jpg` : ''),
+                          className: "w-16 h-10 rounded-lg object-cover border border-neutral-200 bg-neutral-950",
+                          alt: "Thumbnail Preview",
+                          onError: (evt) => { evt.currentTarget.src = 'https://placehold.co/600x400/000/fff?text=Video'; }
+                        }),
+                        l.jsxs("div", {
+                          className: "flex-1 min-w-0",
+                          children: [
+                            l.jsx("p", { className: "text-[10px] font-mono text-neutral-400 uppercase font-bold", children: "Thumbnail Preview" }),
+                            l.jsx("p", {
+                              className: "text-xs text-neutral-600 truncate",
+                              children: thumbnail ? (thumbnail.startsWith('data:') ? 'Base64 Local Upload' : thumbnail) : (getYoutubeId(videoUrl) ? 'Auto-loaded YouTube HQ Thumbnail' : 'Standard placeholder')
+                            })
+                          ]
+                        })
+                      ]
+                    })
+                  ]
+                })
+              ]
+            }),
+            l.jsxs("div", {
+              className: "flex gap-3 pt-4 border-t border-neutral-100",
+              children: [
+                l.jsx("button", {
+                  type: "submit",
+                  className: "flex-1 bg-neutral-950 hover:bg-neutral-800 text-white py-3 rounded-xl text-xs font-mono font-bold tracking-wider uppercase transition-colors shadow-md cursor-pointer text-center",
+                  children: item ? 'Save Changes' : 'Add Item'
+                }),
+                l.jsx("button", {
+                  type: "button",
+                  onClick: onClose,
+                  className: "border border-neutral-200 bg-white text-neutral-600 px-6 py-3 rounded-xl text-xs font-mono font-bold uppercase hover:bg-neutral-50 cursor-pointer",
+                  children: "Cancel"
+                })
+              ]
+            })
+          ]
+        })
+      ]
+    })
+  });
+}
+
+
 function zA({ onBack: e }) {
+  const { galleryItems, isEditMode, addGalleryItem, updateGalleryItem, deleteGalleryItem } = useCMS();
   const [t, n] = k.useState("all"),
     [r, s] = k.useState(null),
-    i = _A.filter((h) =>
+    [isEditorOpen, setIsEditorOpen] = k.useState(false),
+    [editingItem, setEditingItem] = k.useState(null),
+    i = galleryItems.filter((h) =>
       t === "photos"
         ? h.type === "photo"
         : t === "videos"
@@ -412,6 +680,7 @@ function zA({ onBack: e }) {
       const x = (h + 1) % i.length;
       s(i[x]);
     };
+
   k.useEffect(() => {
     const h = (x) => {
       r &&
@@ -426,10 +695,33 @@ function zA({ onBack: e }) {
       () => window.removeEventListener("keydown", h)
     );
   }, [r, i]);
+
+  const handleEditClick = (item) => {
+    setEditingItem(item);
+    setIsEditorOpen(true);
+  };
+
+  const handleDeleteClick = (id) => {
+    if (confirm('Are you absolutely sure you want to delete this gallery item?')) {
+      deleteGalleryItem(id);
+    }
+  };
+
+  const handleSaveItem = (data) => {
+    if (data.id) {
+      updateGalleryItem(data.id, data);
+    } else {
+      addGalleryItem(data);
+    }
+    setIsEditorOpen(false);
+    setEditingItem(null);
+  };
+
   const u = i.filter((h) => h.category === "Welfare"),
     c = i.filter((h) => h.category === "Writer"),
     d = i.filter((h) => h.category === "Speaker"),
     f = i.filter((h) => h.category === "Model");
+
   return l.jsxs("div", {
     className:
       "min-h-screen bg-[#FCFAF6] text-neutral-900 pt-32 pb-24 px-4 md:px-12 flex flex-col relative overflow-hidden",
@@ -453,25 +745,38 @@ function zA({ onBack: e }) {
             ],
           }),
           l.jsxs("div", {
-            className:
-              "flex bg-neutral-100 p-1.5 rounded-full border border-neutral-200/60 shadow-inner w-fit select-none",
+            className: "flex flex-wrap items-center gap-4 select-none",
             children: [
-              l.jsxs("button", {
-                onClick: () => n("all"),
-                className: `px-6 py-2.5 rounded-full text-xs font-mono font-bold tracking-widest uppercase transition-all duration-300 flex items-center gap-2 cursor-pointer ${t === "all" ? "bg-white text-neutral-900 shadow-md scale-100" : "text-neutral-500 hover:text-neutral-900"}`,
-                children: [l.jsx(Lx, { className: "w-3.5 h-3.5" }), "All Work"],
+              l.jsxs("div", {
+                className:
+                  "flex bg-neutral-100 p-1.5 rounded-full border border-neutral-200/60 shadow-inner w-fit",
+                children: [
+                  l.jsxs("button", {
+                    onClick: () => n("all"),
+                    className: `px-6 py-2.5 rounded-full text-xs font-mono font-bold tracking-widest uppercase transition-all duration-300 flex items-center gap-2 cursor-pointer ${t === "all" ? "bg-white text-neutral-900 shadow-md scale-100" : "text-neutral-500 hover:text-neutral-900"}`,
+                    children: [l.jsx(Lx, { className: "w-3.5 h-3.5" }), "All Work"],
+                  }),
+                  l.jsxs("button", {
+                    onClick: () => n("photos"),
+                    className: `px-6 py-2.5 rounded-full text-xs font-mono font-bold tracking-widest uppercase transition-all duration-300 flex items-center gap-2 cursor-pointer ${t === "photos" ? "bg-white text-neutral-900 shadow-md scale-100" : "text-neutral-500 hover:text-neutral-900"}`,
+                    children: [l.jsx(WS, { className: "w-3.5 h-3.5" }), "Photos"],
+                  }),
+                  l.jsxs("button", {
+                    onClick: () => n("videos"),
+                    className: `px-6 py-2.5 rounded-full text-xs font-mono font-bold tracking-widest uppercase transition-all duration-300 flex items-center gap-2 cursor-pointer ${t === "videos" ? "bg-white text-neutral-900 shadow-md scale-100" : "text-neutral-500 hover:text-neutral-900"}`,
+                    children: [l.jsx(r2, { className: "w-3.5 h-3.5" }), "Videos"],
+                  }),
+                ],
               }),
-              l.jsxs("button", {
-                onClick: () => n("photos"),
-                className: `px-6 py-2.5 rounded-full text-xs font-mono font-bold tracking-widest uppercase transition-all duration-300 flex items-center gap-2 cursor-pointer ${t === "photos" ? "bg-white text-neutral-900 shadow-md scale-100" : "text-neutral-500 hover:text-neutral-900"}`,
-                children: [l.jsx(WS, { className: "w-3.5 h-3.5" }), "Photos"],
-              }),
-              l.jsxs("button", {
-                onClick: () => n("videos"),
-                className: `px-6 py-2.5 rounded-full text-xs font-mono font-bold tracking-widest uppercase transition-all duration-300 flex items-center gap-2 cursor-pointer ${t === "videos" ? "bg-white text-neutral-900 shadow-md scale-100" : "text-neutral-500 hover:text-neutral-900"}`,
-                children: [l.jsx(r2, { className: "w-3.5 h-3.5" }), "Videos"],
-              }),
-            ],
+              isEditMode && l.jsxs("button", {
+                onClick: () => {
+                  setEditingItem(null);
+                  setIsEditorOpen(true);
+                },
+                className: "bg-[#0e5fa3] hover:bg-[#0c508a] text-white px-6 py-3 rounded-full text-xs font-mono font-bold tracking-widest uppercase flex items-center gap-2 cursor-pointer shadow-md transition-all active:scale-95",
+                children: [l.jsx(Plus, { className: "w-4 h-4 text-white" }), "Add Gallery Item"]
+              })
+            ]
           }),
         ],
       }),
@@ -514,7 +819,7 @@ function zA({ onBack: e }) {
                 ],
               }),
               u.length > 0
-                ? l.jsx(Qi, { items: u, direction: "right", onItemClick: s })
+                ? l.jsx(Qi, { items: u, direction: "right", onItemClick: s, onEditClick: handleEditClick, onDeleteClick: handleDeleteClick })
                 : l.jsx("div", {
                     className:
                       "max-w-7xl mx-auto w-full text-center py-6 border border-dashed border-neutral-200 rounded-2xl bg-neutral-50/50",
@@ -561,7 +866,7 @@ function zA({ onBack: e }) {
                 ],
               }),
               c.length > 0
-                ? l.jsx(Qi, { items: c, direction: "left", onItemClick: s })
+                ? l.jsx(Qi, { items: c, direction: "left", onItemClick: s, onEditClick: handleEditClick, onDeleteClick: handleDeleteClick })
                 : l.jsx("div", {
                     className:
                       "max-w-7xl mx-auto w-full text-center py-6 border border-dashed border-neutral-200 rounded-2xl bg-neutral-50/50",
@@ -608,7 +913,7 @@ function zA({ onBack: e }) {
                 ],
               }),
               d.length > 0
-                ? l.jsx(Qi, { items: d, direction: "right", onItemClick: s })
+                ? l.jsx(Qi, { items: d, direction: "right", onItemClick: s, onEditClick: handleEditClick, onDeleteClick: handleDeleteClick })
                 : l.jsx("div", {
                     className:
                       "max-w-7xl mx-auto w-full text-center py-6 border border-dashed border-neutral-200 rounded-2xl bg-neutral-50/50",
@@ -655,7 +960,7 @@ function zA({ onBack: e }) {
                 ],
               }),
               f.length > 0
-                ? l.jsx(Qi, { items: f, direction: "left", onItemClick: s })
+                ? l.jsx(Qi, { items: f, direction: "left", onItemClick: s, onEditClick: handleEditClick, onDeleteClick: handleDeleteClick })
                 : l.jsx("div", {
                     className:
                       "max-w-7xl mx-auto w-full text-center py-6 border border-dashed border-neutral-200 rounded-2xl bg-neutral-50/50",
@@ -730,7 +1035,7 @@ function zA({ onBack: e }) {
                                 allowFullScreen: !0,
                                 className: "w-full h-full block",
                               })
-                            : l.jsx("video", {
+                             : l.jsx("video", {
                                 src: r.src,
                                 className: "w-full h-full block",
                                 controls: !0,
@@ -819,6 +1124,15 @@ function zA({ onBack: e }) {
             }),
           }),
       }),
+      l.jsx(GalleryItemEditorModal, {
+        isOpen: isEditorOpen,
+        onClose: () => {
+          setIsEditorOpen(false);
+          setEditingItem(null);
+        },
+        item: editingItem,
+        onSave: handleSaveItem
+      })
     ],
   });
 }
