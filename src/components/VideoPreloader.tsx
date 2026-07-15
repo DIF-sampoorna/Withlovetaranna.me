@@ -8,7 +8,7 @@ import * as k from 'react';
 
 function BA({ onComplete: e }) {
   const [t, n] = k.useState(!1);
-  const [isPaused, setIsPaused] = k.useState(true);
+  const [isPlaying, setIsPlaying] = k.useState(!1);
   const videoRef = k.useRef<HTMLVideoElement>(null);
 
   k.useEffect(() => {
@@ -23,39 +23,48 @@ function BA({ onComplete: e }) {
   k.useEffect(() => {
     const video = videoRef.current;
     if (video) {
-      // Programmatic muted/playsinline overrides to bypass strict iOS Safari restrictions
+      // Ensure all critical attributes are set for iOS Safari autoplay
       video.muted = true;
       video.defaultMuted = true;
       video.setAttribute('muted', '');
       video.setAttribute('playsinline', 'true');
       video.setAttribute('webkit-playsinline', 'true');
       
+      // Explicitly trigger load to begin buffer early
+      video.load();
+
       const playPromise = video.play();
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
-            setIsPaused(false);
+            // Success, wait for time update to verify it is actually moving
           })
           .catch((err) => {
             console.warn("Autoplay blocked or failed on iOS/Safari (Low Power Mode?):", err);
-            setIsPaused(true);
+            setIsPlaying(false);
           });
       }
     }
   }, []);
 
+  const handleTimeUpdate = () => {
+    const video = videoRef.current;
+    if (video && video.currentTime > 0.1 && !video.paused) {
+      setIsPlaying(true);
+    }
+  };
+
   const handleContainerClick = () => {
     const video = videoRef.current;
     if (video) {
-      if (video.paused) {
-        video.play()
-          .then(() => {
-            setIsPaused(false);
-          })
-          .catch((err) => {
-            console.warn("Manual play triggered but failed:", err);
-          });
-      }
+      video.muted = true;
+      video.play()
+        .then(() => {
+          // Success
+        })
+        .catch((err) => {
+          console.warn("Manual play triggered but failed:", err);
+        });
     }
   };
 
@@ -96,32 +105,50 @@ function BA({ onComplete: e }) {
                 "absolute inset-0 w-full h-full object-cover pointer-events-none opacity-20",
             }),
             l.jsx("video", {
-              ref: videoRef,
+              ref: (el) => {
+                videoRef.current = el;
+                if (el) {
+                  el.muted = true;
+                  el.defaultMuted = true;
+                  el.setAttribute('muted', '');
+                  el.setAttribute('playsinline', 'true');
+                  el.setAttribute('webkit-playsinline', 'true');
+                }
+              },
+              src: "/vid.mp4",
               autoPlay: !0,
               muted: !0,
               playsInline: !0,
               "webkit-playsinline": "true",
               preload: "auto",
               onEnded: e,
-              onPlay: () => setIsPaused(false),
-              onPlaying: () => setIsPaused(false),
-              onPause: () => setIsPaused(true),
+              onPlay: () => {
+                const video = videoRef.current;
+                if (video && video.currentTime > 0) {
+                  setIsPlaying(true);
+                }
+              },
+              onPlaying: () => {
+                setIsPlaying(true);
+              },
+              onPause: () => setIsPlaying(false),
+              onTimeUpdate: handleTimeUpdate,
               className:
                 "absolute inset-0 w-full h-full md:object-cover object-contain pointer-events-none mix-blend-normal",
-              children: l.jsx("source", {
-                src: "/vid.mp4",
-                type: "video/mp4",
-              }),
             }),
             l.jsx(AnimatePresence, {
-              children: isPaused &&
+              children: !isPlaying &&
                 l.jsx(Il.div, {
                   initial: { opacity: 0, scale: 0.95 },
                   animate: { opacity: 1, scale: 1 },
                   exit: { opacity: 0, scale: 0.95 },
                   transition: { duration: 0.4, ease: "easeOut" },
+                  onClick: (evt) => {
+                    // Let it bubble or directly trigger play
+                    handleContainerClick();
+                  },
                   className:
-                    "absolute inset-0 flex flex-col items-center justify-center bg-[#121110]/60 backdrop-blur-[2px] z-20 pointer-events-none",
+                    "absolute inset-0 flex flex-col items-center justify-center bg-[#121110]/60 backdrop-blur-[2px] z-20 cursor-pointer pointer-events-auto",
                   children: l.jsxs("div", {
                     className: "flex flex-col items-center gap-4 text-center px-4",
                     children: [

@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
 const l = { jsx, jsxs, Fragment };
 import { motion as X, AnimatePresence as Vr } from 'motion/react';
-import { BookOpen as Rx, ChevronLeft as IS, ChevronRight as co, Compass as Lx, Film as US, Heart as ba, Image as WS, Mic as od, Sparkles as Wo, X as Bx, Maximize2 as KS, Play as Fx, Video as r2, Plus, Edit2, Trash2, Upload } from 'lucide-react';
+import { BookOpen as Rx, ChevronLeft as IS, ChevronRight as co, Compass as Lx, Film as US, Heart as ba, Image as WS, Mic as od, Sparkles as Wo, X as Bx, Maximize2 as KS, Play as Fx, Video as r2, Plus, Edit2, Trash2, Upload, Newspaper } from 'lucide-react';
 import * as k from 'react';
 import CMSImage from './CMSImage';
 import { useCMS, GalleryItem } from './CMSContext';
@@ -154,7 +154,7 @@ function UA({ item: e, onClick: t, onEditClick: editFn, onDeleteClick: deleteFn 
             className:
               "font-mono text-[8px] md:text-[9px] tracking-[0.2em] text-[#E65F1B] font-bold uppercase",
             children:
-              e.category === "Welfare" ? "SOCIAL ENTREPRENEUR" : e.category,
+              e.category === "Welfare" ? "SOCIAL ENTREPRENEUR" : e.category === "Events" ? "EVENTS & NEWS" : e.category,
           }),
           l.jsx("h3", {
             className:
@@ -427,7 +427,8 @@ function GalleryItemEditorModal({ isOpen, onClose, item, onSave }) {
                     l.jsx("option", { value: "Model", children: "Model (Domain .04 - Reclaiming physical gaze)" }),
                     l.jsx("option", { value: "Writer", children: "Writer (Domain .02 - Poetics in quiet chiaroscuro)" }),
                     l.jsx("option", { value: "Speaker", children: "Speaker (Domain .03 - Speech to naming shadows)" }),
-                    l.jsx("option", { value: "Welfare", children: "Welfare (Domain .01 - Social Entrepreneur frontline care)" })
+                    l.jsx("option", { value: "Welfare", children: "Welfare (Domain .01 - Social Entrepreneur frontline care)" }),
+                    l.jsx("option", { value: "Events", children: "Events & News (Domain .05 - Public gatherings and updates)" })
                   ]
                 })
               ]
@@ -720,7 +721,8 @@ function zA({ onBack: e }) {
   const u = i.filter((h) => h.category === "Welfare"),
     c = i.filter((h) => h.category === "Writer"),
     d = i.filter((h) => h.category === "Speaker"),
-    f = i.filter((h) => h.category === "Model");
+    f = i.filter((h) => h.category === "Model"),
+    eventsList = i.filter((h) => h.category === "Events");
 
   return l.jsxs("div", {
     className:
@@ -972,6 +974,53 @@ function zA({ onBack: e }) {
                   }),
             ],
           }),
+          l.jsxs("div", {
+            className: "flex flex-col gap-4",
+            children: [
+              l.jsxs("div", {
+                className:
+                  "max-w-7xl mx-auto w-full flex items-center gap-4 px-4 md:px-0",
+                children: [
+                  l.jsxs("div", {
+                    className:
+                      "flex items-center gap-2 px-3 py-1 bg-[#0D9488]/10 rounded-full border border-[#0D9488]/20 shrink-0",
+                    children: [
+                      l.jsx(Newspaper, { className: "w-3.5 h-3.5 text-[#0D9488]" }),
+                      l.jsx("span", {
+                        className:
+                          "font-mono text-[9px] text-[#0D9488] font-bold tracking-widest uppercase",
+                        children: "DOMAIN .05",
+                      }),
+                    ],
+                  }),
+                  l.jsxs("h2", {
+                    className:
+                      "font-heading text-sm md:text-base font-extrabold tracking-tight text-neutral-900 uppercase",
+                    children: [
+                      "EVENTS & NEWS ",
+                      l.jsx("span", {
+                        className:
+                          "font-display italic font-light text-neutral-500 lowercase",
+                        children: "public gatherings, updates & milestones",
+                      }),
+                    ],
+                  }),
+                  l.jsx("div", { className: "h-px flex-grow bg-neutral-200" }),
+                ],
+              }),
+              eventsList.length > 0
+                ? l.jsx(Qi, { items: eventsList, direction: "right", onItemClick: s, onEditClick: handleEditClick, onDeleteClick: handleDeleteClick })
+                : l.jsx("div", {
+                    className:
+                      "max-w-7xl mx-auto w-full text-center py-6 border border-dashed border-neutral-200 rounded-2xl bg-neutral-50/50",
+                    children: l.jsx("span", {
+                      className:
+                        "font-mono text-xs text-neutral-400 uppercase tracking-widest",
+                      children: "No entries available in this format",
+                    }),
+                  }),
+            ],
+          }),
         ],
       }),
       l.jsxs("div", {
@@ -1084,7 +1133,7 @@ function zA({ onBack: e }) {
                               children: [
                                 r.category === "Welfare"
                                   ? "SOCIAL ENTREPRENEUR"
-                                  : r.category.toUpperCase(),
+                                  : r.category === "Events" ? "EVENTS & NEWS" : r.category.toUpperCase(),
                                 " // ARCHIVE",
                               ],
                             }),

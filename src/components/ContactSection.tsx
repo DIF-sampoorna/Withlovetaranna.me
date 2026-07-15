@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
 const l = { jsx, jsxs, Fragment };
 import { motion as X, AnimatePresence as Vr } from 'motion/react';
-import { Sparkles as Wo, Heart as ba, Feather as $x, Mic as od, Camera as Vx, CircleHelp as OS, Mail as GS, MapPin as YS, CircleCheck as FS, Instagram as Mu, Linkedin as HS, Send as e2 } from 'lucide-react';
+import { Sparkles as Wo, Heart as ba, Feather as $x, Mic as od, Camera as Vx, CircleHelp as OS, Mail as GS, MapPin as YS, CircleCheck as FS, Instagram as Mu, Linkedin as HS, Send as e2, Youtube as YT } from 'lucide-react';
 import * as k from 'react';
 
 function YA() {
@@ -204,6 +204,19 @@ function YA() {
                                 className: "w-3.5 h-3.5 text-[#0e5fa3]",
                               }),
                               "LINKEDIN",
+                            ],
+                          }),
+                          l.jsxs("a", {
+                            href: "https://www.youtube.com/@withlovetaranna_me",
+                            target: "_blank",
+                            rel: "noopener noreferrer",
+                            className:
+                              "flex items-center gap-2 px-4 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800/80 hover:border-neutral-700 text-neutral-300 hover:text-white transition-all duration-300 text-xs font-mono tracking-wider uppercase font-bold",
+                            children: [
+                              l.jsx(YT, {
+                                className: "w-3.5 h-3.5 text-red-500",
+                              }),
+                              "YOUTUBE",
                             ],
                           }),
                         ],

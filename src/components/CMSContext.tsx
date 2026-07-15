@@ -218,6 +218,37 @@ const DEFAULT_GALLERY_ITEMS: GalleryItem[] = [
       "Documenting the systemic aid, medical support camps, and long-term empowerment frameworks run by Deepjyoti India Foundation.",
     youtubeId: "_U0QvsnVfGg",
   },
+  {
+    id: "gal-events-1",
+    type: "photo",
+    src: "/TD-263.jpg.jpeg",
+    thumbnail: "/TD-263.jpg.jpeg",
+    title: "Grassroots Healthcare Summit 2026",
+    category: "Events",
+    description:
+      "Deepjyoti India Foundation hosting key leaders to scale systemic medical aid loops and rural healthcare equity.",
+  },
+  {
+    id: "gal-events-2",
+    type: "photo",
+    src: "/Speaker.JPG.jpeg",
+    thumbnail: "/Speaker.JPG.jpeg",
+    title: "Poetics & Social Change Panel",
+    category: "Events",
+    description:
+      "Tarrana speaking at the annual Literature Festival on giving voice to marginalized narratives through free verse.",
+  },
+  {
+    id: "gal-events-vid",
+    type: "video",
+    src: "https://www.youtube.com/embed/_U0QvsnVfGg",
+    thumbnail: "/TD-004.jpg.jpeg",
+    title: "Sampoorna Impact & Milestones",
+    category: "Events",
+    description:
+      "A video chronicle celebrating the milestones of the Sampoorna project reaching over 5,000 women.",
+    youtubeId: "_U0QvsnVfGg",
+  },
 ];
 
 interface CMSContextType {
