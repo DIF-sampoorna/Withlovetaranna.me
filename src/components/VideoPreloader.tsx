@@ -37,7 +37,7 @@ function BA({ onComplete: e }) {
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
-            // Success, wait for time update to verify it is actually moving
+            setIsPlaying(true);
           })
           .catch((err) => {
             console.warn("Autoplay blocked or failed on iOS/Safari (Low Power Mode?):", err);
@@ -60,7 +60,7 @@ function BA({ onComplete: e }) {
       video.muted = true;
       video.play()
         .then(() => {
-          // Success
+          setIsPlaying(true);
         })
         .catch((err) => {
           console.warn("Manual play triggered but failed:", err);
@@ -104,7 +104,7 @@ function BA({ onComplete: e }) {
               className:
                 "absolute inset-0 w-full h-full object-cover pointer-events-none opacity-20",
             }),
-            l.jsx("video", {
+            l.jsxs("video", {
               ref: (el) => {
                 videoRef.current = el;
                 if (el) {
@@ -115,7 +115,6 @@ function BA({ onComplete: e }) {
                   el.setAttribute('webkit-playsinline', 'true');
                 }
               },
-              src: "/vid.mp4",
               autoPlay: !0,
               muted: !0,
               playsInline: !0,
@@ -123,10 +122,7 @@ function BA({ onComplete: e }) {
               preload: "auto",
               onEnded: e,
               onPlay: () => {
-                const video = videoRef.current;
-                if (video && video.currentTime > 0) {
-                  setIsPlaying(true);
-                }
+                setIsPlaying(true);
               },
               onPlaying: () => {
                 setIsPlaying(true);
@@ -134,7 +130,10 @@ function BA({ onComplete: e }) {
               onPause: () => setIsPlaying(false),
               onTimeUpdate: handleTimeUpdate,
               className:
-                "absolute inset-0 w-full h-full md:object-cover object-contain pointer-events-none mix-blend-normal",
+                "absolute inset-0 w-full h-full object-cover pointer-events-none mix-blend-normal",
+              children: [
+                l.jsx("source", { src: "/tar-vid1.mp4", type: "video/mp4" })
+              ]
             }),
             l.jsx(AnimatePresence, {
               children: !isPlaying &&
