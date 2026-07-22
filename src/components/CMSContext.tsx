@@ -315,20 +315,28 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     return DEFAULT_GALLERY_ITEMS;
   });
 
+  const safeSetItem = (key: string, value: string) => {
+    try {
+      localStorage.setItem(key, value);
+    } catch (err) {
+      console.warn(`[CMS] Failed to save to localStorage under key "${key}" (possibly QuotaExceededError):`, err);
+    }
+  };
+
   // Sync CMS State from server on mount
   useEffect(() => {
     const fetchCMSData = async () => {
       try {
-        const res = await fetch('/api/cms');
+        const res = await fetch(`/api/cms?t=${Date.now()}`);
         if (res.ok) {
           const data = await res.json();
           if (data.imageMap) {
             setImageMap(data.imageMap);
-            localStorage.setItem('cms_image_map', JSON.stringify(data.imageMap));
+            safeSetItem('cms_image_map', JSON.stringify(data.imageMap));
           }
           if (data.galleryItems && Array.isArray(data.galleryItems) && data.galleryItems.length > 0) {
             setGalleryItems(data.galleryItems);
-            localStorage.setItem('cms_gallery_items', JSON.stringify(data.galleryItems));
+            safeSetItem('cms_gallery_items', JSON.stringify(data.galleryItems));
           }
         }
       } catch (e) {
@@ -380,14 +388,14 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   const setEditMode = (val: boolean) => {
     if (isAdmin) {
       setEditModeState(val);
-      localStorage.setItem('cms_is_edit_mode', String(val));
+      safeSetItem('cms_is_edit_mode', String(val));
     }
   };
 
   const updateImage = (originalSrc: string, newSrc: string) => {
     const updated = { ...imageMap, [originalSrc]: newSrc };
     setImageMap(updated);
-    localStorage.setItem('cms_image_map', JSON.stringify(updated));
+    safeSetItem('cms_image_map', JSON.stringify(updated));
     saveToServer(updated, galleryItems);
   };
 
@@ -398,7 +406,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     };
     const updated = [...galleryItems, newItem];
     setGalleryItems(updated);
-    localStorage.setItem('cms_gallery_items', JSON.stringify(updated));
+    safeSetItem('cms_gallery_items', JSON.stringify(updated));
     saveToServer(imageMap, updated);
   };
 
@@ -410,14 +418,14 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
       return item;
     });
     setGalleryItems(updated);
-    localStorage.setItem('cms_gallery_items', JSON.stringify(updated));
+    safeSetItem('cms_gallery_items', JSON.stringify(updated));
     saveToServer(imageMap, updated);
   };
 
   const deleteGalleryItem = (id: string) => {
     const updated = galleryItems.filter(item => item.id !== id);
     setGalleryItems(updated);
-    localStorage.setItem('cms_gallery_items', JSON.stringify(updated));
+    safeSetItem('cms_gallery_items', JSON.stringify(updated));
     saveToServer(imageMap, updated);
   };
 
@@ -449,16 +457,16 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
         if (parsed.imageMap && typeof parsed.imageMap === 'object') {
           newImageMap = parsed.imageMap;
           setImageMap(newImageMap);
-          localStorage.setItem('cms_image_map', JSON.stringify(newImageMap));
+          safeSetItem('cms_image_map', JSON.stringify(newImageMap));
         }
         if (parsed.galleryItems && Array.isArray(parsed.galleryItems)) {
           newGalleryItems = parsed.galleryItems;
           setGalleryItems(newGalleryItems);
-          localStorage.setItem('cms_gallery_items', JSON.stringify(newGalleryItems));
+          safeSetItem('cms_gallery_items', JSON.stringify(newGalleryItems));
         } else if (!parsed.imageMap && !parsed.galleryItems) {
           newImageMap = parsed;
           setImageMap(newImageMap);
-          localStorage.setItem('cms_image_map', JSON.stringify(newImageMap));
+          safeSetItem('cms_image_map', JSON.stringify(newImageMap));
         }
         saveToServer(newImageMap, newGalleryItems);
         return true;

@@ -247,6 +247,7 @@ async function startServer() {
   // API endpoints
   app.get('/api/cms', (req, res) => {
     try {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
       if (fs.existsSync(cmsFilePath)) {
         const data = fs.readFileSync(cmsFilePath, 'utf-8');
         return res.json(JSON.parse(data));
