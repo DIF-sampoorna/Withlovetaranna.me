@@ -315,6 +315,50 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     return DEFAULT_GALLERY_ITEMS;
   });
 
+  // Sync CMS State from server on mount
+  useEffect(() => {
+    const fetchCMSData = async () => {
+      try {
+        const res = await fetch('/api/cms');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.imageMap) {
+            setImageMap(data.imageMap);
+            localStorage.setItem('cms_image_map', JSON.stringify(data.imageMap));
+          }
+          if (data.galleryItems && Array.isArray(data.galleryItems) && data.galleryItems.length > 0) {
+            setGalleryItems(data.galleryItems);
+            localStorage.setItem('cms_gallery_items', JSON.stringify(data.galleryItems));
+          }
+        }
+      } catch (e) {
+        console.error('Failed to fetch CMS data from server:', e);
+      }
+    };
+    fetchCMSData();
+  }, []);
+
+  // Helper to persist to the server
+  const saveToServer = async (
+    updatedImageMap: Record<string, string>,
+    updatedGalleryItems: GalleryItem[]
+  ) => {
+    try {
+      await fetch('/api/cms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          imageMap: updatedImageMap,
+          galleryItems: updatedGalleryItems,
+        }),
+      });
+    } catch (e) {
+      console.error('Failed to sync CMS to server:', e);
+    }
+  };
+
   const login = (email: string, password: string): boolean => {
     if (email === 'contact@dif-sampoorna.ngo' && password === 'Test123Test!') {
       setIsAdmin(true);
@@ -344,6 +388,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     const updated = { ...imageMap, [originalSrc]: newSrc };
     setImageMap(updated);
     localStorage.setItem('cms_image_map', JSON.stringify(updated));
+    saveToServer(updated, galleryItems);
   };
 
   const addGalleryItem = (item: Omit<GalleryItem, 'id'>) => {
@@ -354,6 +399,7 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     const updated = [...galleryItems, newItem];
     setGalleryItems(updated);
     localStorage.setItem('cms_gallery_items', JSON.stringify(updated));
+    saveToServer(imageMap, updated);
   };
 
   const updateGalleryItem = (id: string, updatedFields: Partial<GalleryItem>) => {
@@ -365,23 +411,28 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     });
     setGalleryItems(updated);
     localStorage.setItem('cms_gallery_items', JSON.stringify(updated));
+    saveToServer(imageMap, updated);
   };
 
   const deleteGalleryItem = (id: string) => {
     const updated = galleryItems.filter(item => item.id !== id);
     setGalleryItems(updated);
     localStorage.setItem('cms_gallery_items', JSON.stringify(updated));
+    saveToServer(imageMap, updated);
   };
 
   const resetGalleryItems = () => {
     setGalleryItems(DEFAULT_GALLERY_ITEMS);
     localStorage.removeItem('cms_gallery_items');
+    saveToServer(imageMap, DEFAULT_GALLERY_ITEMS);
   };
 
   const resetAll = () => {
     setImageMap({});
     localStorage.removeItem('cms_image_map');
-    resetGalleryItems();
+    setGalleryItems(DEFAULT_GALLERY_ITEMS);
+    localStorage.removeItem('cms_gallery_items');
+    saveToServer({}, DEFAULT_GALLERY_ITEMS);
   };
 
   const exportConfig = () => {
@@ -392,18 +443,24 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
     try {
       const parsed = JSON.parse(json);
       if (parsed && typeof parsed === 'object') {
+        let newImageMap = imageMap;
+        let newGalleryItems = galleryItems;
+
         if (parsed.imageMap && typeof parsed.imageMap === 'object') {
-          setImageMap(parsed.imageMap);
-          localStorage.setItem('cms_image_map', JSON.stringify(parsed.imageMap));
+          newImageMap = parsed.imageMap;
+          setImageMap(newImageMap);
+          localStorage.setItem('cms_image_map', JSON.stringify(newImageMap));
         }
         if (parsed.galleryItems && Array.isArray(parsed.galleryItems)) {
-          setGalleryItems(parsed.galleryItems);
-          localStorage.setItem('cms_gallery_items', JSON.stringify(parsed.galleryItems));
+          newGalleryItems = parsed.galleryItems;
+          setGalleryItems(newGalleryItems);
+          localStorage.setItem('cms_gallery_items', JSON.stringify(newGalleryItems));
         } else if (!parsed.imageMap && !parsed.galleryItems) {
-          // If direct imageMap format
-          setImageMap(parsed);
-          localStorage.setItem('cms_image_map', JSON.stringify(parsed));
+          newImageMap = parsed;
+          setImageMap(newImageMap);
+          localStorage.setItem('cms_image_map', JSON.stringify(newImageMap));
         }
+        saveToServer(newImageMap, newGalleryItems);
         return true;
       }
     } catch (e) {
@@ -413,7 +470,6 @@ export function CMSProvider({ children }: { children: React.ReactNode }) {
   };
 
   const getSrc = (originalSrc: string): string => {
-    // If we have an override in our imageMap, return it, otherwise return original
     return imageMap[originalSrc] || originalSrc;
   };
 
