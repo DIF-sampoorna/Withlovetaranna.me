@@ -79,8 +79,9 @@ function BA({ onComplete: e }) {
       transition: { duration: 1.2, ease: [0.25, 1, 0.5, 1] },
     },
     onClick: handleContainerClick,
-    className:
-      "fixed inset-0 z-50 bg-[#121110] w-screen h-screen overflow-hidden select-none flex flex-col justify-between p-8 md:p-12 text-[#FCFAF6] cursor-pointer",
+    className: `fixed inset-0 z-50 ${
+      isPlaying ? "bg-white md:bg-[#121110]" : "bg-[#121110]"
+    } w-screen h-screen overflow-hidden select-none flex flex-col justify-between p-8 md:p-12 text-[#FCFAF6] cursor-pointer`,
     children: [
       l.jsx("div", {
         className:
@@ -130,7 +131,7 @@ function BA({ onComplete: e }) {
               onPause: () => setIsPlaying(false),
               onTimeUpdate: handleTimeUpdate,
               className:
-                "absolute inset-0 w-full h-full object-cover pointer-events-none mix-blend-normal",
+                "absolute inset-0 w-full h-full object-contain md:object-cover pointer-events-none mix-blend-normal",
               children: [
                 l.jsx("source", { src: "/tar-vid1.mp4", type: "video/mp4" })
               ]
